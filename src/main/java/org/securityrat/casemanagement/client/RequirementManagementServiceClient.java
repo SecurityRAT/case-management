@@ -2,6 +2,7 @@ package org.securityrat.casemanagement.client;
 
 import java.util.List;
 
+import org.securityrat.casemanagement.service.dto.AttributeDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,17 @@ public interface RequirementManagementServiceClient {
      */
     @RequestMapping(value = "/api/requirement-sets")
     List<RequirementSetDTO> getRequirementSetsFromRequirementManagement(
+        @RequestParam(value = "active.equals") Boolean active
+    );
+
+    /**
+     * Get a list of Attributes from requirement management.
+     *
+     * @param active Add the given value of type Boolean as a filter for the field 'active' to the request to requirement management
+     * @return List of Attributes as returned by requirement management.
+     */
+    @RequestMapping(value = "/api/attributes")
+    List<AttributeDTO> getAttributesFromRequirementMangament(
         @RequestParam(value = "active.equals") Boolean active
     );
 }
