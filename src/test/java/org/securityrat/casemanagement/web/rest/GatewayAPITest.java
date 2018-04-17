@@ -26,15 +26,20 @@ public class GatewayAPITest {
     @Autowired
     private RequirementManagementAPIService requirementManagementAPIService;
 
+    /**
+     * Test for getActiveRequirementSet()
+     */
     @Test
     public void getActiveRequirementSetTest() {
         List<RequirementSetDTO> expectedResult = new ArrayList<>();
         RequirementSetDTO dto1 = new RequirementSetDTO();
         dto1.setActive(true);
+        expectedResult.add(dto1);
         RequirementSetDTO dto2 = new RequirementSetDTO();
         dto2.setActive(true);
+        expectedResult.add(dto2);
 
-        given(requirementManagementServiceClient.getRequirementSetsFromRequirementManagement(null))
+        given(requirementManagementServiceClient.getRequirementSetsFromRequirementManagement(true))
             .willReturn(expectedResult);
 
         List<RequirementSetDTO> result = requirementManagementAPIService.getActiveRequirementSets();
@@ -45,6 +50,10 @@ public class GatewayAPITest {
                 allActive = false;
         }
         assert (allActive);
+
+        assert(result.contains(dto1));
+        assert(result.contains(dto2));
+    }
     }
 
 }
