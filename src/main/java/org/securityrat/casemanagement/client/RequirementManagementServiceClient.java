@@ -27,7 +27,7 @@ public interface RequirementManagementServiceClient {
      * @return List of Attributes as returned by requirement management.
      */
     @RequestMapping(value = "/api/attributes")
-    List<AttributeDTO> getAttributesFromRequirementMangament(
+    List<AttributeDTO> getAttributesFromRequirementManagement(
         @RequestParam(value = "active.equals") Boolean active
     );
 }

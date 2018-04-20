@@ -30,7 +30,7 @@ public class RequirementManagementAPIService {
 
     public List<AttributeDTO> getActiveAttributes(Long requirementSetId, List<AttributeType> types) {
         List<AttributeDTO> result = this.requirementManagementServiceClient
-            .getAttributesFromRequirementMangament(true);
+            .getAttributesFromRequirementManagement(true);
 
         if(result != null) {
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null

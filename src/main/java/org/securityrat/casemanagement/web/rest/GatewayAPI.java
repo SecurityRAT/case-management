@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -51,14 +51,14 @@ public class GatewayAPI {
      */
     @GetMapping("/attributes")
     @Timed
-    public ResponseEntity<List<AttributeDTO>> getActiveAttribute(
+    public ResponseEntity<List<AttributeDTO>> getActiveAttributes(
         @RequestParam(value = "requirementSet") Long requirementSetId,
         @RequestParam(value = "types", required = false) String attributeTypes
     ) {
         log.debug("REST request to get active Attributes for RequirementSet with ID " + requirementSetId
             + " of types " + attributeTypes);
 
-        List<AttributeType> type = new ArrayList<>();
+        List<AttributeType> type = new LinkedList<>();
         if(attributeTypes != null) {
             for(String typeAsString : attributeTypes.split(",")) {
                  type.add(AttributeType.valueOf(typeAsString));

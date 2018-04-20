@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -31,7 +30,7 @@ public class GatewayAPITest {
     private RequirementManagementAPIService requirementManagementAPIService;
 
     /**
-     * Test for getActiveRequirementSet()
+     * Test for /requirementSets
      */
     @Test
     public void getActiveRequirementSetTest() {
@@ -60,7 +59,7 @@ public class GatewayAPITest {
     }
 
     /**
-     * Test for getAttributes()
+     * Test for /attributes
      * Assure that parent relations are assembled correctly
      */
     @Test
@@ -114,7 +113,7 @@ public class GatewayAPITest {
         attributeWithUnknownParent.setParent(unknownParent);
         expectedResult.add(attributeWithUnknownParent);
 
-        given(requirementManagementServiceClient.getAttributesFromRequirementMangament(true))
+        given(requirementManagementServiceClient.getAttributesFromRequirementManagement(true))
             .willReturn(expectedResult);
 
         List<AttributeDTO> result = requirementManagementAPIService.getActiveAttributes(0L);
@@ -158,7 +157,7 @@ public class GatewayAPITest {
     }
 
     /**
-     * Test for getAttributes()
+     * Test for /attributes
      * Assure that filtering works correctly
      */
     @Test
@@ -207,7 +206,7 @@ public class GatewayAPITest {
         attribute3.setAttributeKey(attributeKeyDTO3);
         expectedResult.add(attribute3);
 
-        given(requirementManagementServiceClient.getAttributesFromRequirementMangament(true))
+        given(requirementManagementServiceClient.getAttributesFromRequirementManagement(true))
             .willReturn(expectedResult);
 
         List<AttributeDTO> result = requirementManagementAPIService
@@ -218,38 +217,6 @@ public class GatewayAPITest {
         assert !result.contains(attribute3);
     }
 
-    /*
-    @Test
-    public void getAttributesCyclicTest() {
-        Long id = 0L;
 
-        // add a tree of attributes to the test set
-        List<AttributeDTO> expectedResult = new ArrayList<>();
-        AttributeDTO attributeParent = new AttributeDTO();
-        attributeParent.setId(id++);
-        attributeParent.setName("Parent");
-        expectedResult.add(attributeParent);
-
-        AttributeDTO attributeChild1 = new AttributeDTO();
-        attributeChild1.setName("Child 1");
-        attributeChild1.setId(id++);
-        attributeChild1.setParentId(attributeParent.getId());
-        expectedResult.add(attributeChild1);
-
-        AttributeDTO attributeGrandChild1 = new AttributeDTO();
-        attributeGrandChild1.setName("Grandchild 1");
-        attributeGrandChild1.setId(id++);
-        attributeGrandChild1.setParentId(attributeChild1.getId());
-        expectedResult.add(attributeGrandChild1);
-
-        // create a cycle in the tree
-        attributeParent.setParentId(attributeGrandChild1.getId());
-
-        given(requirementManagementServiceClient.getAttributesFromRequirementMangament(true))
-            .willReturn(expectedResult);
-
-        List<AttributeDTO> result = requirementManagementAPIService.getActiveAttributes(0L);
-    }
-    */
 
 }
