@@ -21,7 +21,7 @@ public interface RequirementManagementServiceClient {
     );
 
     /**
-     * Get a list of Attributes from requirement management.
+     * Get a list of Attributes from requirement management, filter by active.
      *
      * @param active Add the given value of type Boolean as a filter for the field 'active' to the request to requirement management
      * @return List of Attributes as returned by requirement management.
@@ -30,4 +30,12 @@ public interface RequirementManagementServiceClient {
     List<AttributeDTO> getAttributesFromRequirementManagement(
         @RequestParam(value = "active.equals") Boolean active
     );
+
+    /**
+     * Get a list of all Attributes from requirement management.
+     *
+     * @return List of Attributes as returned by requirement management.
+     */
+    @RequestMapping(value = "/api/attributes")
+    List<AttributeDTO> getAllAttributesFromRequirementManagement();
 }

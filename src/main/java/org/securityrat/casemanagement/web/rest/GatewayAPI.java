@@ -67,4 +67,28 @@ public class GatewayAPI {
         List<AttributeDTO> result = requirementManagementAPIService.getActiveAttributes(requirementSetId, type);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    /**
+     * GET /attribute : Get active attributes with given ids.
+     *
+     * @param attributeIds A list of ids (comma separated string)
+     * @return the ResponseEntity with status 200 (OK) and the list of attributes in body
+     *         or 404 (Not found) if one of the specified IDs does not exist
+     */
+    @GetMapping("/attribute")
+    @Timed
+    public ResponseEntity<List<AttributeDTO>> getAttribute(@RequestParam(value = "ids") String attributeIds) {
+        log.debug("REST request to get Attributes with IDs " + attributeIds);
+
+        List<Long> ids = new LinkedList<>();
+        if(attributeIds != null) {
+            for(String idAsString : attributeIds.split(",")) {
+                ids.add(Long.parseLong(idAsString));
+            }
+        }
+        List<AttributeDTO> result;
+        result = requirementManagementAPIService.getAttributesByIds(ids); // may throw IDNotFoundException (-> 404)
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

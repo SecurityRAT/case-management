@@ -92,6 +92,7 @@ public class AttributeDTO implements Serializable {
         this.name = name;
     }
 
+    @JsonProperty
     public String getDescription() {
         return description;
     }
@@ -108,10 +109,12 @@ public class AttributeDTO implements Serializable {
         this.showOrder = showOrder;
     }
 
+    @JsonIgnore
     public Boolean isActive() {
         return active;
     }
 
+    @JsonProperty
     public void setActive(Boolean active) {
         this.active = active;
     }

@@ -9,12 +9,14 @@ import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
 import org.securityrat.casemanagement.service.dto.AttributeKeyDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
+import org.securityrat.casemanagement.web.rest.errors.IDNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
@@ -219,6 +221,106 @@ public class GatewayAPITest {
         assertFalse(result.contains(attribute3));
     }
 
+    @Test
+    public void getAttributeTest() {
+        Long nextId = 0L;
+        List<AttributeDTO> resultFromRequirementManagement = new LinkedList<>();
+        List<Long> requestedIds = new LinkedList<>();
 
+        // this attribute should be in the result
+        AttributeDTO parent = new AttributeDTO();
+        parent.setId(nextId++);
+        parent.setActive(true);
+        resultFromRequirementManagement.add(parent);
+        requestedIds.add(parent.getId());
 
+        // this attribute should'nt be in the result (id not requested)
+        AttributeDTO idNotRequested = new AttributeDTO();
+        idNotRequested.setId(nextId++);
+        idNotRequested.setActive(true);
+        resultFromRequirementManagement.add(idNotRequested);
+
+        // this attribute should not be in the result (not active)
+        AttributeDTO inactiveAttributeDTO = new AttributeDTO();
+        inactiveAttributeDTO.setId(nextId++);
+        inactiveAttributeDTO.setActive(false);
+        resultFromRequirementManagement.add(inactiveAttributeDTO);
+        requestedIds.add(inactiveAttributeDTO.getId());
+
+        // add some children to check if unflattening works
+        AttributeDTO child1 = new AttributeDTO();
+        child1.setActive(true);
+        child1.setId(nextId++);
+        child1.setParent(parent);
+        resultFromRequirementManagement.add(child1);
+        requestedIds.add(child1.getId());
+
+        AttributeDTO child2 = new AttributeDTO();
+        child2.setActive(true);
+        child2.setId(nextId++);
+        child2.setParent(parent);
+        resultFromRequirementManagement.add(child2);
+        requestedIds.add(child2.getId());
+
+        AttributeDTO child1child = new AttributeDTO();
+        child1child.setActive(true);
+        child1child.setId(nextId++);
+        child1child.setParent(child1);
+        resultFromRequirementManagement.add(child1child);
+        requestedIds.add(child1child.getId());
+
+        given(requirementManagementServiceClient.getAllAttributesFromRequirementManagement())
+            .willReturn(resultFromRequirementManagement);
+
+        List<AttributeDTO> result = requirementManagementAPIService
+            .getAttributesByIds(requestedIds);
+
+        // assert filtering
+        assertTrue(result.contains(parent));
+        assertFalse(result.contains(idNotRequested));
+        assertFalse(result.contains(inactiveAttributeDTO));
+
+        // assert hierarchy
+        assertFalse(result.contains(child1)); // should instead be in parent.children
+        assertFalse(result.contains(child2));
+        assertFalse(result.contains(child1child));
+
+        for(AttributeDTO attributeDTO : result) {
+            if(attributeDTO.getId().equals(parent.getId())) {
+                assertTrue(attributeDTO.getChildren().size() == 2);
+                AttributeDTO expectedChild1 = attributeDTO.getChildren().get(0);
+                AttributeDTO expectedChild2 = attributeDTO.getChildren().get(1);
+                assertTrue(expectedChild1 != null && expectedChild2 != null);
+                assertTrue(expectedChild1.getChildren().size() == 1);
+                AttributeDTO expectedChild1Child = expectedChild1.getChildren().get(0);
+                assertTrue(expectedChild1Child != null);
+                break;
+            }
+        }
+    }
+
+    @Test(expected = IDNotFoundException.class)
+    public void getAttributeExceptionTest() {
+        Long nextId = 0L;
+        List<AttributeDTO> resultFromRequirementManagement = new LinkedList<>();
+        List<Long> requestedIds = new LinkedList<>();
+
+        AttributeDTO attributeDTO1 = new AttributeDTO();
+        attributeDTO1.setActive(true);
+        attributeDTO1.setId(nextId++);
+        resultFromRequirementManagement.add(attributeDTO1);
+
+        AttributeDTO attributeDTO2 = new AttributeDTO();
+        attributeDTO2.setActive(true);
+        attributeDTO2.setId(nextId++);
+        resultFromRequirementManagement.add(attributeDTO2);
+
+        given(requirementManagementServiceClient.getAllAttributesFromRequirementManagement())
+            .willReturn(resultFromRequirementManagement);
+
+        requestedIds.add(1L);
+        requestedIds.add(123L); // id 123 does not exist
+
+        requirementManagementAPIService.getAttributesByIds(requestedIds);
+    }
 }
