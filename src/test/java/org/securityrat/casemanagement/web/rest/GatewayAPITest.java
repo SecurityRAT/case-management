@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -52,10 +54,10 @@ public class GatewayAPITest {
             if (!requirementSetDTO.isActive())
                 allActive = false;
         }
-        assert (allActive);
+        assertTrue(allActive);
 
-        assert(result.contains(dto1));
-        assert(result.contains(dto2));
+        assertTrue(result.contains(dto1));
+        assertTrue(result.contains(dto2));
     }
 
     /**
@@ -123,9 +125,9 @@ public class GatewayAPITest {
             List<AttributeDTO> children = attributeDTO.getChildren();
             switch(attributeDTO.getName()) {
                 case "Parent":
-                    assert children != null;
-                    assert children.contains(attributeChild1);
-                    assert children.contains(attributeChild2);
+                    assertTrue(children != null);
+                    assertTrue(children.contains(attributeChild1));
+                    assertTrue(children.contains(attributeChild2));
                     break;
 
                 case "Child 1":
@@ -133,27 +135,27 @@ public class GatewayAPITest {
                 case "Grandchild 2":
                 case "attribute":
                 case "Attribute with unknown parent":
-                    assert children == null || children.isEmpty();
+                    assertTrue(children == null || children.isEmpty());
                     break;
 
                 case "Child 2":
-                    assert children != null;
-                    assert children.contains(attributeGrandChild1);
-                    assert children.contains(attributeGrandChild2);
+                    assertTrue(children != null);
+                    assertTrue(children.contains(attributeGrandChild1));
+                    assertTrue(children.contains(attributeGrandChild2));
                     break;
             }
         }
 
         // assure that no top level attribute is missing in the result set
-        assert result.contains(attributeParent);
-        assert result.contains(attribute);
-        assert result.contains(attributeWithUnknownParent);
+        assertTrue(result.contains(attributeParent));
+        assertTrue(result.contains(attribute));
+        assertTrue(result.contains(attributeWithUnknownParent));
 
         // assure that children are not included on top level
-        assert !result.contains(attributeChild1);
-        assert !result.contains(attributeChild2);
-        assert !result.contains(attributeGrandChild1);
-        assert !result.contains(attributeGrandChild2);
+        assertFalse(result.contains(attributeChild1));
+        assertFalse(result.contains(attributeChild2));
+        assertFalse(result.contains(attributeGrandChild1));
+        assertFalse(result.contains(attributeGrandChild2));
     }
 
     /**
@@ -212,9 +214,9 @@ public class GatewayAPITest {
         List<AttributeDTO> result = requirementManagementAPIService
             .getActiveAttributes(3L, attributeTypeFilter);
 
-        assert result.contains(attribute1);
-        assert !result.contains(attribute2);
-        assert !result.contains(attribute3);
+        assertTrue(result.contains(attribute1));
+        assertFalse(result.contains(attribute2));
+        assertFalse(result.contains(attribute3));
     }
 
 
