@@ -3,6 +3,8 @@ package org.securityrat.casemanagement.service;
 import org.securityrat.casemanagement.client.RequirementManagementServiceClient;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
+import org.securityrat.casemanagement.service.dto.ExtensionKeyDTO;
+import org.securityrat.casemanagement.service.dto.RequirementDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
 import org.securityrat.casemanagement.web.rest.errors.IDNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +38,12 @@ public class RequirementManagementAPIService {
         List<AttributeDTO> result = this.requirementManagementServiceClient
             .getAttributesFromRequirementManagement(true);
 
-        if(result != null) {
+        if (result != null) {
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
                 && attributeDTO.getAttributeKey().getRequirementSet().getId() != requirementSetId);
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
                 && !attributeDTO.getAttributeKey().isActive()); // include only attributes with active attributeKey or no attributeKey
-            if(types != null && types.size() > 0)
+            if (types != null && types.size() > 0)
                 result.removeIf((attributeDTO -> attributeDTO.getAttributeKey() != null
                     && types.indexOf(attributeDTO.getAttributeKey().getType()) == -1));
         }
@@ -53,13 +55,13 @@ public class RequirementManagementAPIService {
         List<AttributeDTO> result = this.requirementManagementServiceClient
             .getAllAttributesFromRequirementManagement();
 
-        if(result != null)
+        if (result != null)
             result.removeIf(attributeDTO -> !ids.contains(attributeDTO.getId()));
 
-        if(result.size() < ids.size())
+        if (result.size() < ids.size())
             throw new IDNotFoundException(); // 404 if user requested non-existent ids
 
-        if(result != null) {
+        if (result != null) {
             result.removeIf(attributeDTO -> !attributeDTO.isActive());
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
                 && !attributeDTO.getAttributeKey().isActive()); // include only attributes with active attributeKey or no attributeKey
@@ -73,8 +75,8 @@ public class RequirementManagementAPIService {
 
         // generate a HashMap to map parent relation in result
         HashMap<Long, List<AttributeDTO>> toTreeHelper = new HashMap<>(); // key: parentId, value: list of children
-        for(AttributeDTO attributeDTO : result) {
-            if(attributeDTO.getParent() != null) {
+        for (AttributeDTO attributeDTO : result) {
+            if (attributeDTO.getParent() != null) {
                 Long parentId = attributeDTO.getParent().getId();
                 if (parentId != null) {
                     toTreeHelper.putIfAbsent(parentId, new ArrayList<>());
@@ -85,13 +87,13 @@ public class RequirementManagementAPIService {
 
         // move children to their parent's list of children (but only if result contains both child and parent)
         List<AttributeDTO> toRemove = new LinkedList<>();
-        for(AttributeDTO possibleParent : result) {
+        for (AttributeDTO possibleParent : result) {
             List<AttributeDTO> childAttributes = toTreeHelper.get(possibleParent.getId());
-            if(childAttributes != null) {
-                for(AttributeDTO childAttribute : childAttributes) {
-                    if(result.contains(childAttribute)) {
+            if (childAttributes != null) {
+                for (AttributeDTO childAttribute : childAttributes) {
+                    if (result.contains(childAttribute)) {
 
-                        if(possibleParent.getChildren() == null)
+                        if (possibleParent.getChildren() == null)
                             possibleParent.setChildren(new LinkedList<>());
                         possibleParent.getChildren().add(childAttribute);
                         toRemove.add(childAttribute);
@@ -105,4 +107,17 @@ public class RequirementManagementAPIService {
 
         return result;
     }
+
+    public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> parameters) {
+        //TODO: Implement to return Requirements
+
+        List<RequirementDTO> result = new ArrayList<>();
+        RequirementDTO requirementDTO = new RequirementDTO();
+
+        result.add(requirementDTO);
+
+        return result;
+    }
+
+
 }

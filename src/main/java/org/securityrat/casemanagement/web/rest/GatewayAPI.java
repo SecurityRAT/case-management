@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
 import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
+import org.securityrat.casemanagement.service.dto.RequirementDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,4 +92,35 @@ public class GatewayAPI {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
+    /**
+     * GET /requirements : Get active attributes with given ids.
+     *
+     * @param requirementSetId Id of requirementSet
+     * @param List of parameter ids (comma seperated string)
+     * @return the ResponseEntity with status 200 (OK) and the list of requirements in body
+     *         or 404 (Not found) if one of the specified IDs does not exist
+     */
+    @GetMapping("/requirements")
+    @Timed
+    public ResponseEntity<List<RequirementDTO>> getRequirements(
+    @RequestParam(value = "requirementSet") Long requirementSetId,
+    @RequestParam(value = "parameters") String parameters) {
+        List<Long> params = new LinkedList<>();
+        if(parameters != null) {
+            for(String idAsString : parameters.split(",")) {
+                params.add(Long.parseLong(idAsString));
+            }
+        }
+        List<RequirementDTO> result;
+       result = requirementManagementAPIService.getActiveRequirements(requirementSetId,params);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+
+
 }
