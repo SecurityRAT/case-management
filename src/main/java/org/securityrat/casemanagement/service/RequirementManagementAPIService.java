@@ -2,18 +2,12 @@ package org.securityrat.casemanagement.service;
 
 import org.securityrat.casemanagement.client.RequirementManagementServiceClient;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
-import org.securityrat.casemanagement.service.dto.AttributeDTO;
-import org.securityrat.casemanagement.service.dto.ExtensionKeyDTO;
-import org.securityrat.casemanagement.service.dto.RequirementDTO;
-import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
+import org.securityrat.casemanagement.service.dto.*;
 import org.securityrat.casemanagement.web.rest.errors.IDNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RequirementManagementAPIService {
@@ -108,13 +102,235 @@ public class RequirementManagementAPIService {
         return result;
     }
 
+    /**
+     * Adds a AttributeType to the RequirementDTO depending on a given AttributeDTO
+     *
+     * @param requirement  RequirementDTO we want to add the AttributeType
+     * @param attributeKey AttributeKey we use to find out the AttributeType
+     */
+    private void addAttributeTypesToRequirement(RequirementDTO requirement, AttributeKeyDTO attributeKey) {
+
+        switch (attributeKey.getType()) {
+            case FE_TAG:
+                if (requirement.getFeTags() == null) {
+                    requirement.setFeTags(new ArrayList<>());
+                }
+                if (!requirement.getFeTags().contains(attributeKey.getId())) {
+                    requirement.getFeTags().add(attributeKey.getId());
+                }
+                break;
+
+            case PARAMETER:
+                if (requirement.getParameters() == null) {
+                    requirement.setParameters(new ArrayList<>());
+                }
+                if (!requirement.getParameters().contains(attributeKey.getId())) {
+
+                    requirement.getParameters().add(attributeKey.getId());
+                }
+
+                break;
+
+            case CATEGORY:
+                requirement.setCatergoryId(attributeKey.getId());
+                break;
+        }
+    }
+
+
+    /**
+     * Adds Extensions to the RequirementDTO depending on a given ExtensionDTO
+     */
+
+
+    private void addExtensionsToRequirement(RequirementDTO requirement, ExtensionDTO extension) {
+
+        switch (extension.getExtensionKey().getSection()) {
+            // When section is "Status"
+
+            case STATUS:
+
+                boolean extensionKeyFound = false;
+                boolean extensionFound = false;
+
+                if (requirement.getStatus() == null) {
+                    requirement.setStatus(new ArrayList<>());
+                }
+
+                // search if we have already have the extension Key in Our list
+                for (StatusForReqDTO status : requirement.getStatus()) {
+                    if (status.getKeyId().equals(extension.getExtensionKey().getId())) {
+                        extensionKeyFound = true;
+                    }
+                }
+
+                // if we didn't find it yet we add the Extension and the extensionKey
+                if (!extensionKeyFound) {
+                    StatusForReqDTO tempStatus = new StatusForReqDTO();
+                    tempStatus.setKeyId(extension.getExtensionKey().getId());
+                    tempStatus.setValues(new ArrayList<>());
+                    tempStatus.getValues().add(extension.getId());
+                    requirement.getStatus().add(tempStatus);
+                } else {
+
+                    // if we already have the extensionKey in our list, we need to check if we
+                    // have all extension with the extensiionKey
+                    for (StatusForReqDTO status : requirement.getStatus()) {
+                        if (status.getKeyId().equals(extension.getExtensionKey().getId())) {
+                            for (Long value : status.getValues()) {
+                                if (extension.getId().equals(value)) {
+                                    extensionFound = true;
+                                }
+                            }
+                            if (!extensionFound) {
+                                // if the extension isn't in the list we add it
+                                status.getValues().add(extension.getId());
+                            }
+                        }
+                    }
+                }
+
+                break;
+
+            case ENHANCEMENT:
+
+                boolean enhancementExtensionKeyFound = false;
+                boolean enhancementExtensionFound = false;
+
+                if (requirement.getEnhancements() == null) {
+                    requirement.setEnhancements(new ArrayList<>());
+                }
+
+                // search if we have already have the extension Key in Our list
+                for (EnhancementForReqDTO enhancement : requirement.getEnhancements()) {
+                    if (enhancement.getKeyId().equals(extension.getExtensionKey().getId())) {
+                        enhancementExtensionKeyFound = true;
+                    }
+                }
+                // if we didn't find it yet we add the Extension and the extensionKey.
+                // before adding we build up the content
+                if (!enhancementExtensionKeyFound) {
+                    EnhancementForReqDTO tempEnhancement = new EnhancementForReqDTO();
+                    ExtensionWithoutDescDTO tempExtension = new ExtensionWithoutDescDTO();
+
+                    tempEnhancement.setKeyId(extension.getExtensionKey().getId());
+                    tempEnhancement.setContents(new ArrayList<>());
+
+                    tempExtension.setId(extension.getId());
+                    tempExtension.setShowOrder(extension.getShowOrder());
+                    tempExtension.setContent(extension.getContent());
+
+                    tempEnhancement.getContents().add(tempExtension);
+
+                    requirement.getEnhancements().add(tempEnhancement);
+
+
+                } else {
+                    // if we already have the extensionKey in our list, we need to check if we
+                    // have all extension with the extensiionKey
+                    for (EnhancementForReqDTO enhancement : requirement.getEnhancements()) {
+
+                        if (enhancement.getKeyId().equals(extension.getExtensionKey().getId())) {
+                            for (ExtensionWithoutDescDTO extensionWithoutDescDTO : enhancement.getContents()) {
+                                if (extension.getId().equals(extensionWithoutDescDTO.getId())) {
+                                    enhancementExtensionFound = true;
+                                }
+                            }
+                            if (!enhancementExtensionFound) {
+                                // if the extension isn't in the list we add it
+                                // before adding we build up the extension
+                                EnhancementForReqDTO tempEnhancement = new EnhancementForReqDTO();
+                                ExtensionWithoutDescDTO tempExtension = new ExtensionWithoutDescDTO();
+
+                                tempEnhancement.setKeyId(extension.getExtensionKey().getId());
+                                tempExtension.setId(extension.getId());
+                                tempExtension.setContent(extension.getContent());
+                                tempExtension.setShowOrder(extension.getShowOrder());
+
+                                enhancement.getContents().add(tempExtension);
+                            }
+                        }
+                    }
+                    break;
+                }
+        }
+    }
+
+
+    /**
+     * Return a List of Requirements which have requested conditions.
+     *
+     * @param requirementSetId Id of RequirementSet we want to search for the Requirement
+     * @param parameters       Id of Parameters the Requirement
+     * @return RequirementsDTO which has all the requested conditions
+     */
     public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> parameters) {
-        //TODO: Implement to return Requirements
+        /* TODO: currently we only build up the requirements without paying attention the the
+           parameters
 
+         */
+
+
+        HashSet<SkeletonDTO> skeletonHashSet = new HashSet<>();
+        HashSet<AttributeDTO> attributeHashSet = new HashSet<>();
+        HashSet<ExtensionDTO> extensionHashSet = new HashSet<>();
+        HashSet<AttributeKeyDTO> attributeKeyHashSet = new HashSet<>();
+        HashSet<ExtensionKeyDTO> extensionKeyHashSet = new HashSet<>();
         List<RequirementDTO> result = new ArrayList<>();
-        RequirementDTO requirementDTO = new RequirementDTO();
 
-        result.add(requirementDTO);
+        List<SkAtExDTO> skAtExDTOs = this.requirementManagementServiceClient.getAllSkAtExFromRequirementManagement(true);
+        skAtExDTOs.removeIf(skAtExDTO -> !skAtExDTO.getSkeleton().getRequirementSet().getId().equals(requirementSetId));
+
+        for (SkAtExDTO skAtExDTO : skAtExDTOs) {
+            if (skAtExDTO.getSkeleton() != null) {
+                skeletonHashSet.add(skAtExDTO.getSkeleton());
+            }
+
+            if (skAtExDTO.getAttribute() != null) {
+                attributeHashSet.add(skAtExDTO.getAttribute());
+            }
+
+            if (skAtExDTO.getAttribute() != null) {
+                if (skAtExDTO.getAttribute().getAttributeKey() != null) {
+                    attributeKeyHashSet.add(skAtExDTO.getAttribute().getAttributeKey());
+                }
+            }
+
+            if (skAtExDTO.getExtension() != null) {
+                if (skAtExDTO.getExtension().getExtensionKey() != null) {
+                    extensionKeyHashSet.add(skAtExDTO.getExtension().getExtensionKey());
+                }
+            }
+
+            if (skAtExDTO.getExtension() != null) {
+                extensionHashSet.add(skAtExDTO.getExtension());
+            }
+        }
+
+        for (SkeletonDTO skeletonDTO : skeletonHashSet) {
+            RequirementDTO tempRequirement = new RequirementDTO();
+            tempRequirement.setId(skeletonDTO.getId());
+            tempRequirement.setName(skeletonDTO.getName());
+            tempRequirement.setDescription(skeletonDTO.getDescription());
+            tempRequirement.setShowOrder(skeletonDTO.getShowOrder());
+
+
+            for (SkAtExDTO skAtExDTO : skAtExDTOs) {
+                if (skAtExDTO.getSkeleton().getId() == skeletonDTO.getId()) {
+                    if (skAtExDTO.getAttribute() != null && skAtExDTO.getAttribute().getAttributeKey() != null) {
+                        addAttributeTypesToRequirement(tempRequirement, skAtExDTO.getAttribute().getAttributeKey());
+                    }
+
+                    if (skAtExDTO.getExtension() != null && skAtExDTO.getExtension().getExtensionKey() != null) {
+                        addExtensionsToRequirement(tempRequirement, skAtExDTO.getExtension());
+                    }
+                }
+            }
+
+
+            // addExtensionsToRequirement(tempRequirement, extensionKeyHashSet, extensionHashSet);
+            result.add(tempRequirement);
+        }
 
         return result;
     }

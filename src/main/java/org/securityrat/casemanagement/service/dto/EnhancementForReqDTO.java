@@ -4,14 +4,14 @@ import java.util.List;
 
 public class EnhancementForReqDTO {
 
-    private Integer keyId;
+    private Long keyId;
     private List<ExtensionWithoutDescDTO> contents;
 
-    public Integer getKeyId() {
+    public Long getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(Integer keyId) {
+    public void setKeyId(Long keyId) {
         this.keyId = keyId;
     }
 

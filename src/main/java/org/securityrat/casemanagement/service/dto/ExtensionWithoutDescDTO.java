@@ -15,11 +15,7 @@ public class ExtensionWithoutDescDTO {
 
     private Integer showOrder;
 
-    @JsonIgnore
-    @NotNull
-    private Boolean active;
 
-    private ExtensionKeyDTO extensionKey;
 
     public Long getId() {
         return id;
@@ -44,23 +40,6 @@ public class ExtensionWithoutDescDTO {
 
     public void setShowOrder(Integer showOrder) {
         this.showOrder = showOrder;
-    }
-
-    @NotNull
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(@NotNull Boolean active) {
-        this.active = active;
-    }
-
-    public ExtensionKeyDTO getExtensionKey() {
-        return extensionKey;
-    }
-
-    public void setExtensionKey(ExtensionKeyDTO extensionKey) {
-        this.extensionKey = extensionKey;
     }
 
 

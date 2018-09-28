@@ -6,6 +6,7 @@ import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
 import org.securityrat.casemanagement.service.dto.RequirementDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
+import org.securityrat.casemanagement.service.dto.SkAtExDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,9 +119,6 @@ public class GatewayAPI {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-
-
 
 
 }

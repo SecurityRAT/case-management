@@ -4,22 +4,22 @@ import java.util.List;
 
 public class StatusForReqDTO {
 
-    private Integer keyId;
-    private List<Integer> values;
+    private Long keyId;
+    private List<Long> values;
 
-    public Integer getKeyId() {
+    public Long getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(Integer keyId) {
+    public void setKeyId(Long keyId) {
         this.keyId = keyId;
     }
 
-    public List<Integer> getValues() {
+    public List<Long> getValues() {
         return values;
     }
 
-    public void setValues(List<Integer> values) {
+    public void setValues(List<Long> values) {
         this.values = values;
     }
 }
