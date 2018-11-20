@@ -1,7 +1,5 @@
 package org.securityrat.casemanagement.service.dto;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
@@ -14,7 +12,6 @@ public class ExtensionWithoutDescDTO {
     private String content;
 
     private Integer showOrder;
-
 
 
     public Long getId() {

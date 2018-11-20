@@ -2,7 +2,6 @@ package org.securityrat.casemanagement.service.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.securityrat.casemanagement.domain.enumeration.AttributeType;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
@@ -24,7 +23,6 @@ public class AttributeDTO implements Serializable {
     private String name;
 
     @Lob
-    @JsonIgnore
     private String description;
 
     private Integer showOrder;
@@ -39,23 +37,10 @@ public class AttributeDTO implements Serializable {
     @JsonIgnore
     private AttributeKeyDTO attributeKey;
 
-    private Long keyId;
-
     private List<AttributeDTO> children;
 
     public AttributeDTO() {
         children = new ArrayList<>();
-    }
-
-    public void setKeyId(Long keyId) {
-        this.keyId = keyId;
-    }
-
-    public Long getKeyId() {
-        Long result = null;
-        if(attributeKey != null)
-            result = attributeKey.getId();
-        return result;
     }
 
     @JsonIgnore
@@ -92,11 +77,11 @@ public class AttributeDTO implements Serializable {
         this.name = name;
     }
 
-    @JsonProperty
+    
     public String getDescription() {
         return description;
     }
-
+    
     public void setDescription(String description) {
         this.description = description;
     }

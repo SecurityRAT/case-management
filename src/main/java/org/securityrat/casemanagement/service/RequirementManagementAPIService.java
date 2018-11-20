@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RequirementManagementAPIService {
@@ -27,7 +28,17 @@ public class RequirementManagementAPIService {
     public List<AttributeDTO> getActiveAttributes(Long requirementSetId) {
         return getActiveAttributes(requirementSetId, null);
     }
-
+    
+    public List<AttributeKeyDTO> getActiveAttributeKeys(Long requirementSetId, String type) {
+    	return this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true, type);
+    }
+    
+    /**
+     * Get active attributes in a given requirement set and with attributes key type present in a given list of types
+     * @param requirementSetId the requirement set id
+     * @param types the list of attribute key types
+     * @return
+     */
     public List<AttributeDTO> getActiveAttributes(Long requirementSetId, List<AttributeType> types) {
         List<AttributeDTO> result = this.requirementManagementServiceClient
             .getAttributesFromRequirementManagement(true);
@@ -38,8 +49,8 @@ public class RequirementManagementAPIService {
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
                 && !attributeDTO.getAttributeKey().isActive()); // include only attributes with active attributeKey or no attributeKey
             if (types != null && types.size() > 0)
-                result.removeIf((attributeDTO -> attributeDTO.getAttributeKey() != null
-                    && types.indexOf(attributeDTO.getAttributeKey().getType()) == -1));
+                result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
+                    && !types.contains(attributeDTO.getAttributeKey().getType()));
         }
 
         return unflattenAttributeHierarchy(result);
@@ -73,7 +84,7 @@ public class RequirementManagementAPIService {
             if (attributeDTO.getParent() != null) {
                 Long parentId = attributeDTO.getParent().getId();
                 if (parentId != null) {
-                    toTreeHelper.putIfAbsent(parentId, new ArrayList<>());
+                    toTreeHelper.putIfAbsent(parentId, new LinkedList<>());
                     toTreeHelper.get(parentId).add(attributeDTO);
                 }
             }
@@ -100,6 +111,39 @@ public class RequirementManagementAPIService {
         result.removeAll(toRemove);
 
         return result;
+    }
+    
+    /**
+     * Restructure the given list of attributes to be conform with the {@link GenericAttributeGatewayDTO}
+     * @param attributes list of attributes
+     * @return the generated restructured list
+     */
+    public List<GenericAttributeGatewayDTO> generateGatewayAttributeDTO(List<AttributeDTO> attributes) {
+    	List<GenericAttributeGatewayDTO> result = new ArrayList<>();
+
+		for (AttributeDTO attrDto : attributes) {
+			// Checks whether the attribute key is already in array
+			List<GenericAttributeGatewayDTO> foundAttributeKeys = result.stream()
+					.filter(x -> x.getId() == attrDto.getAttributeKey().getId()).collect(Collectors.toList());
+			GenericAttributeGatewayDTO genericAttribute;
+			
+			if (foundAttributeKeys.size() == 0) {
+				// add a new entry to result array
+				genericAttribute = new GenericAttributeGatewayDTO(attrDto.getAttributeKey().getId(),
+						attrDto.getAttributeKey().getName(), attrDto.getAttributeKey().getType(),
+						attrDto.getAttributeKey().getDescription(), attrDto.getAttributeKey().getShowOrder());
+				List<AttributeDTO> values = new ArrayList<>();
+				values.add(attrDto);
+				genericAttribute.setValues(values);
+				result.add(genericAttribute);
+			} else {
+				// update the values array (attributes list for particular attribute key)
+				genericAttribute = foundAttributeKeys.get(0);
+				genericAttribute.getValues().add(attrDto);
+			}
+		}
+		
+		return result;
     }
 
     /**
@@ -161,6 +205,7 @@ public class RequirementManagementAPIService {
                 for (StatusForReqDTO status : requirement.getStatus()) {
                     if (status.getKeyId().equals(extension.getExtensionKey().getId())) {
                         extensionKeyFound = true;
+                        break;
                     }
                 }
 
@@ -180,6 +225,7 @@ public class RequirementManagementAPIService {
                             for (Long value : status.getValues()) {
                                 if (extension.getId().equals(value)) {
                                     extensionFound = true;
+                                    break;
                                 }
                             }
                             if (!extensionFound) {
@@ -265,7 +311,7 @@ public class RequirementManagementAPIService {
      * @return RequirementsDTO which has all the requested conditions
      */
     public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> parameters) {
-        /* TODO: currently we only build up the requirements without paying attention the the
+        /* TODO: currently we only build up the requirements without paying attention to the
            parameters
 
          */
