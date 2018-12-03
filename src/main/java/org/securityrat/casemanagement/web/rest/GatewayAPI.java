@@ -4,11 +4,12 @@ import com.codahale.metrics.annotation.Timed;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
 import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
-import org.securityrat.casemanagement.service.dto.AttributeKeyDTO;
+import org.securityrat.casemanagement.service.dto.ExtensionKeyDTO;
 import org.securityrat.casemanagement.service.dto.GenericAttributeGatewayDTO;
+import org.securityrat.casemanagement.service.dto.GenericExtensionDTO;
 import org.securityrat.casemanagement.service.dto.RequirementDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
-import org.securityrat.casemanagement.service.dto.SkAtExDTO;
+import org.securityrat.casemanagement.service.dto.RequirementStructureDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -62,7 +61,7 @@ public class GatewayAPI {
 	@Timed
 	public ResponseEntity<List<GenericAttributeGatewayDTO>> getParameters(
 			@RequestParam(value = "requirementSet") Long requirementSetId) {
-		log.info("REST request to get all active parameter for RequirementSet with ID %d", requirementSetId);
+		log.info("REST request to get all active parameter for RequirementSet with ID {}", requirementSetId);
 		
 		return new ResponseEntity<>(this.getAttributes(requirementSetId, AttributeType.PARAMETER), HttpStatus.OK);
 	}
@@ -102,7 +101,7 @@ public class GatewayAPI {
 	@Timed
 	public ResponseEntity<List<GenericAttributeGatewayDTO>> getTags(
 			@RequestParam(value = "requirementSet") Long requirementSetId) {
-		log.info("REST request to get all active tags for RequirementSet with ID %d", requirementSetId);
+		log.info("REST request to get all active tags for RequirementSet with ID {}", requirementSetId);
 		return new ResponseEntity<>(this.getAttributes(requirementSetId, AttributeType.FE_TAG), HttpStatus.OK);
 	}
 	
@@ -119,9 +118,25 @@ public class GatewayAPI {
 	@Timed
 	public ResponseEntity<List<GenericAttributeGatewayDTO>> getCategories(
 			@RequestParam(value = "requirementSet") Long requirementSetId) {
-		log.info("REST request to get all active parameter for RequirementSet with ID %d", requirementSetId);
+		log.info("REST request to get all active parameter for RequirementSet with ID {}", requirementSetId);
 
 		return new ResponseEntity<>(this.getAttributes(requirementSetId, AttributeType.CATEGORY), HttpStatus.OK);
+	}
+	
+	/**
+	 * GET /requirementStructure?requirementSet : Retrieves the requirement table structure of a given requirement set.
+	 * @param requirementSetId the requirementSet ID
+	 * @return
+	 */
+	@GetMapping("/requirementStructure")
+	public ResponseEntity<RequirementStructureDTO> getRequirementStructure(
+		@RequestParam(value = "requirementSet") Long requirementSetId
+	) {
+		List<ExtensionKeyDTO> extensionKeys = requirementManagementAPIService.getActiveExtensionKeys(requirementSetId);
+		List<GenericExtensionDTO> extensions = requirementManagementAPIService.getActiveExtensionForReqStructure(requirementSetId);
+		
+		
+		return new ResponseEntity<>(this.requirementManagementAPIService.generateRequirementStructureDTO(extensionKeys, extensions), HttpStatus.OK);
 	}
 	
 	/**
@@ -152,7 +167,11 @@ public class GatewayAPI {
 	}
 	
 	
-	
+	/**
+	 * Parse a comma separated string to long values.
+	 * @param values comma separated string
+	 * @return
+	 */
 	private List<Long> parseStringToList(String values) {
 		List<Long> result = new ArrayList<>();
 		for (String value: values.split(",")) {

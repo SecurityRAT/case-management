@@ -5,7 +5,7 @@ import java.util.List;
 public class EnhancementForReqDTO {
 
     private Long keyId;
-    private List<ExtensionWithoutDescDTO> contents;
+    private List<GenericExtensionDTO> contents;
 
     public Long getKeyId() {
         return keyId;
@@ -15,11 +15,11 @@ public class EnhancementForReqDTO {
         this.keyId = keyId;
     }
 
-    public List<ExtensionWithoutDescDTO> getContents() {
+    public List<GenericExtensionDTO> getContents() {
         return contents;
     }
 
-    public void setContents(List<ExtensionWithoutDescDTO> contents) {
+    public void setContents(List<GenericExtensionDTO> contents) {
         this.contents = contents;
     }
 }

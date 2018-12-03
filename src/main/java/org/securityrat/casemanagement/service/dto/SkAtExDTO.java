@@ -5,7 +5,7 @@ public class SkAtExDTO {
     private Long id;
     private SkeletonDTO skeleton;
     private AttributeDTO attribute;
-    private ExtensionDTO extension;
+    private ExtensionReqDTO extension;
 
     public Long getId() {
         return id;
@@ -31,11 +31,11 @@ public class SkAtExDTO {
         this.attribute = attribute;
     }
 
-    public ExtensionDTO getExtension() {
+    public ExtensionReqDTO getExtension() {
         return extension;
     }
 
-    public void setExtension(ExtensionDTO extension) {
+    public void setExtension(ExtensionReqDTO extension) {
         this.extension = extension;
     }
 

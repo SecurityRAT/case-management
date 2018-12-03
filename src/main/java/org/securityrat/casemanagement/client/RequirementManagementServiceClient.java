@@ -71,7 +71,7 @@ public interface RequirementManagementServiceClient {
 	 * @return List of Extensions as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/extensions")
-	List<ExtensionDTO> getAllExtensionsFromRequirementManagement(@RequestParam(value = "active.equals") Boolean active);
+	List<GenericExtensionDTO> getAllExtensionsFromRequirementManagement(@RequestParam(value = "active.equals") Boolean active);
 
 	/**
 	 * Get a list of all SkAtEx from requirement management.
