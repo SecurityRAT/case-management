@@ -3,7 +3,7 @@
     "promptValues": {
       "packageName": "org.securityrat.casemanagement"
     },
-    "jhipsterVersion": "4.14.1",
+    "jhipsterVersion": "6.2.0",
     "baseName": "caseManagement",
     "packageName": "org.securityrat.casemanagement",
     "packageFolder": "org/securityrat/casemanagement",
@@ -28,6 +28,10 @@
     "jhiPrefix": "jhi",
     "clientPackageManager": "yarn",
     "skipClient": true,
-    "skipUserManagement": true
+    "skipUserManagement": true,
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "blueprints": []
   }
 }
