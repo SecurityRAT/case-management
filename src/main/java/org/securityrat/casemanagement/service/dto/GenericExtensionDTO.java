@@ -3,12 +3,12 @@ package org.securityrat.casemanagement.service.dto;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GenericExtensionDTO {
-	
+
 	@NotNull
 	private Long id;
 
@@ -17,10 +17,10 @@ public class GenericExtensionDTO {
 	private String content;
 
 	private Integer showOrder;
-	
+
 	@Lob
 	private String description;
-	
+
 	@JsonIgnore
 	private ExtensionKeyDTO extensionKey;
 
@@ -47,7 +47,7 @@ public class GenericExtensionDTO {
 	public void setShowOrder(Integer showOrder) {
 		this.showOrder = showOrder;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -60,7 +60,7 @@ public class GenericExtensionDTO {
 	public ExtensionKeyDTO getExtensionKey() {
 		return extensionKey;
 	}
-	
+
 	@JsonProperty
 	public void setExtensionKey(ExtensionKeyDTO extensionKey) {
 		this.extensionKey = extensionKey;

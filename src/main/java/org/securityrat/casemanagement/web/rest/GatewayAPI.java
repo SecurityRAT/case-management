@@ -1,6 +1,7 @@
 package org.securityrat.casemanagement.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
+
+import io.micrometer.core.annotation.Timed;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
 import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
@@ -62,7 +63,7 @@ public class GatewayAPI {
 	public ResponseEntity<List<GenericAttributeGatewayDTO>> getParameters(
 			@RequestParam(value = "requirementSet") Long requirementSetId) {
 		log.info("REST request to get all active parameter for RequirementSet with ID {}", requirementSetId);
-		
+
 		return new ResponseEntity<>(this.getAttributes(requirementSetId, AttributeType.PARAMETER), HttpStatus.OK);
 	}
 
@@ -87,7 +88,7 @@ public class GatewayAPI {
 				.generateGatewayAttributeDTO(attributes);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * GET /parameters?requirementSet : Get all tags for a given requirementSet.
 	 *
@@ -104,7 +105,7 @@ public class GatewayAPI {
 		log.info("REST request to get all active tags for RequirementSet with ID {}", requirementSetId);
 		return new ResponseEntity<>(this.getAttributes(requirementSetId, AttributeType.FE_TAG), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * GET /parameters?requirementSet : Get all categories for a given requirementSet.
 	 *
@@ -122,7 +123,7 @@ public class GatewayAPI {
 
 		return new ResponseEntity<>(this.getAttributes(requirementSetId, AttributeType.CATEGORY), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * GET /requirementStructure?requirementSet : Retrieves the requirement table structure of a given requirement set.
 	 * @param requirementSetId the requirementSet ID
@@ -134,11 +135,11 @@ public class GatewayAPI {
 	) {
 		List<ExtensionKeyDTO> extensionKeys = requirementManagementAPIService.getActiveExtensionKeys(requirementSetId);
 		List<GenericExtensionDTO> extensions = requirementManagementAPIService.getActiveExtensionForReqStructure(requirementSetId);
-		
-		
+
+
 		return new ResponseEntity<>(this.requirementManagementAPIService.generateRequirementStructureDTO(extensionKeys, extensions), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * GET /requirements : Get active attributes with given ids.
 	 *
@@ -165,8 +166,8 @@ public class GatewayAPI {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
-	
+
+
 	/**
 	 * Parse a comma separated string to long values.
 	 * @param values comma separated string
@@ -177,10 +178,10 @@ public class GatewayAPI {
 		for (String value: values.split(",")) {
 			result.add(Long.parseLong(value));
 		}
-		
+
 		return result;
 	}
-	
+
 	private List<GenericAttributeGatewayDTO> getAttributes(Long requirementSetId, AttributeType type) {
 		List<AttributeType> types = new ArrayList<>();
 		types.add(type);
