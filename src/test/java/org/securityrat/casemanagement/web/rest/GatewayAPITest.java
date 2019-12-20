@@ -9,7 +9,7 @@ import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.AttributeDTO;
 import org.securityrat.casemanagement.service.dto.AttributeKeyDTO;
 import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
-import org.securityrat.casemanagement.web.rest.errors.IDNotFoundException;
+import org.securityrat.casemanagement.service.exceptions.IDNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -127,7 +126,7 @@ public class GatewayAPITest {
             List<AttributeDTO> children = attributeDTO.getChildren();
             switch(attributeDTO.getName()) {
                 case "Parent":
-                    assertTrue(children != null);
+                    assertNotNull(children);
                     assertTrue(children.contains(attributeChild1));
                     assertTrue(children.contains(attributeChild2));
                     break;
@@ -287,13 +286,13 @@ public class GatewayAPITest {
 
         for(AttributeDTO attributeDTO : result) {
             if(attributeDTO.getId().equals(parent.getId())) {
-                assertTrue(attributeDTO.getChildren().size() == 2);
+                assertEquals(2, attributeDTO.getChildren().size());
                 AttributeDTO expectedChild1 = attributeDTO.getChildren().get(0);
                 AttributeDTO expectedChild2 = attributeDTO.getChildren().get(1);
                 assertTrue(expectedChild1 != null && expectedChild2 != null);
-                assertTrue(expectedChild1.getChildren().size() == 1);
+                assertEquals(1, expectedChild1.getChildren().size());
                 AttributeDTO expectedChild1Child = expectedChild1.getChildren().get(0);
-                assertTrue(expectedChild1Child != null);
+                assertNotNull(expectedChild1Child);
                 break;
             }
         }
