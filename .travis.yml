@@ -3,6 +3,8 @@ os:
 services:
 - docker
 language: node_js
+node_js:
+- 13.5.0
 jdk:
 - openjdk8
 sudo: false
