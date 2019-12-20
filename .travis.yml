@@ -6,7 +6,7 @@ language: node_js
 node_js:
 - 8.9.4
 jdk:
-- oraclejdk8
+- openjdk8
 sudo: false
 cache:
   directories:
@@ -33,8 +33,6 @@ env:
   - secure: H1q/AM/ljDpTk3Z7l2/WPVFV4JeraiAqa7LvVV3GudGXN8B1CS8Bj3+TnQcmyFmXu1cWD5Hq2EfRIZqttTlpge28Id0Ad+iL6j1Sm/xBJy9ltFdP5xjsWuF+06YH/lAXwmaOGHoC4wHQ6sbI0wbUQ775ABIoz2/talLF4podxvAJOuZIMJjX4akDaAx+uac5Th8QFNlRpMgdST2aUUSocFavJBxsX4jjxT6XIiUuvtVZqJ3kt/+YUju1Saez/jLO9nL0uHwNiu8J2V2keEj0B/9hc2ZzEUXwZpKPtEMkOpDob4aDsb7ljClsqOURSkulmbRQ5KYqYEIfjLFuYXXfpbq7SnN1/5Qd1nlloMMBqiVTad1/w97j7m15XECZ+hctJO40XxJ4ec+34HfSi+Gm0zEHtg4hC/S05LRIPH+ky4MyzIluxm0DcLFKP9ajc8+vIZ2XZpJcfx6fhWP+iQJP6aKVtclmuPww8Ru/L18/2JhslDOVGTdxY/Lkuf7PBSlTKIDXKTepPyShCOFf4cZmYI+R9QlVSWyn221VRS7OQ6Ty6Bxmn4UwQc/aXYOXLD3rHuNR3CvpiJA/7AwbdcI18zN/zGRX5fGZPMzjIoUuuUMUNg0Rkw2N6jrYOWWUpkKhXavTAAfhkHm+HZTEWS1Ch/U2/R09MQ7RqQoLdSG151Y=
   - secure: O1iKPJcS8SvHNjsC1KfASw42f1KPDVoa9ePheO/+UB20Mg2mnooIrZO+2ksTATGSTjG2pVHR2c7hM3WEkdPrt7MzV+g0pGw/THuyZU90p3JkccBFudR+d9z7MZnwXzdrV6EKmEalPmB/HlBxXugUj5hl0S9kvS31J1DNWthzZ6ZE2uvQPKSMW/Fp+5kg5cj0XVUIgPUgmUnTgUjvLF1nSdd2PNEJ3Bf2p6SQQQVx0KInR3+iZGS/h5SX5CWRuF02IARt0IemKGflkpihMw1mtAGH//CRnV02bzrplwfaioIhQqV4C2mwlGfF+irMOmZ2yAyyuEWdj2/35V7re8oDcdQtwrpY+Y7moDjFgS4iEQIqrOQgQpJAoyjuzKjgJ5QIPAhkzU8JMeqMnK5wfW6S4O/mA0QR5fVJMdQok6GjLmZWtRxzJQW4v+jcJ3pQBsyJCmMMVHDHwyVP4Ss71MqpI7nFTCNN+wFTMcsx1xr9E++rq+xcwdQvwQn5/Bp+DzgBezv2HQhrxKS8ozWpGMeUiDalR3N0WGZEmgtFoOy5nQ3PePPTb4JFqaOY+wD6MKsfvBUxnysmpEmpU93pVzUjFPvUmZPcE2JuFNB7KCKMjsCmGThPT7fnMuCWbuDPYeL0jCzn/LYtg+szamCz7KdXtTS0alCN0ZUKO4i+kzqGipU=
 before_install:
-- jdk_switcher use oraclejdk8
-- java -version
 - sudo /etc/init.d/mysql stop
 - sudo /etc/init.d/postgresql stop
 - curl -o- -L https://yarnpkg.com/install.sh | bash
