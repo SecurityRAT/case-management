@@ -22,7 +22,6 @@ addons:
       secure: iEsQimM9dEZJKOYRIhQxT3Y+bQ2LCGVUm0qtl6J1ki/eUO3RNArGFxVPEYXM0pX86fA5/FNlUY7Efy7WLSwW6nLMeMW4pd0s2Z7xx5xDOkgiuIXfx8klE/YW8AQHggl/qcYm0M2VyFUVnRzkGfIYgNxKykA0MKNFQ2pgXeMh3MmVAqZ9a3MGd6hVU7p+fr1qDpN0Wwss3dj35pO2k0Cskyq89klN1Gd9qfZvpYoelXdP7fTj87KrbQx5K976RxGSok77szcBNegS3pKblQFWPcV9iqwnNkZHoeDsbEa4TsOi/5CBb/lMhj+oc53KAoe9SMAC5irHTQBf2Huvvl5WfZbtqD17YqQ7jbsErG3GBDc5SsATwKhv2AiZIjKYfe9AfQICf2S87sFP2CyzYow1mf5Pm0DI8b6oN7aOLzSTvqQmd3/MVhB1BBGFuLz34/q+J2KAnOkfleQa6f2Onp7XK86xFStjJUSbParXg3xMPciEsvQxNwqGqnHB3ooVkKfOBccHRYHJKHyWfaYgd/KDIo9sqhIQz/XRb+RZJvSqNt8ahGXdtmg6GuWAm2N3Ic9GVSJu3PxzywYYBFfSp6vRg1zQ+DYM0io+JLuBHd4M0MgxcZ1scUPHQe+VrPnlANSI/gnWBBvCoSwEqggUIC/x3w0R7U0er+C/a8LVxXmb4aA=
     branches:
     - master
-    - dev
 env:
   global:
   - REPOS_SCRIPTS=$TRAVIS_BUILD_DIR/travis/scripts
@@ -53,4 +52,3 @@ notifications:
   email:
     on_success: change
     on_failure: always
-    on_start: false
