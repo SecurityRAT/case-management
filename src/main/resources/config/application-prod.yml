@@ -16,8 +16,8 @@
 logging:
   level:
     ROOT: INFO
-    org.securityrat.casemanagement: INFO
     io.github.jhipster: INFO
+    org.securityrat.casemanagement: INFO
 
 management:
   metrics:
