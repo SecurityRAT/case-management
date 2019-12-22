@@ -3,9 +3,6 @@ package org.securityrat.casemanagement.service.dto;
 import org.securityrat.casemanagement.config.Constants;
 
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-
 import javax.validation.constraints.*;
 import java.util.Set;
 
