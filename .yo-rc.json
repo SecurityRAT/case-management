@@ -3,7 +3,7 @@
     "promptValues": {
       "packageName": "org.securityrat.casemanagement"
     },
-    "jhipsterVersion": "6.5.1",
+    "jhipsterVersion": "6.6.0",
     "baseName": "caseManagement",
     "packageName": "org.securityrat.casemanagement",
     "packageFolder": "org/securityrat/casemanagement",
@@ -33,6 +33,7 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "blueprints": [],
-    "embeddableLaunchScript": false
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1577042681890
   }
 }

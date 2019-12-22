@@ -1,8 +1,8 @@
 package org.securityrat.casemanagement;
 
 import org.securityrat.casemanagement.config.ApplicationProperties;
-import org.securityrat.casemanagement.config.DefaultProfileUtil;
 
+import io.github.jhipster.config.DefaultProfileUtil;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.apache.commons.lang3.StringUtils;
