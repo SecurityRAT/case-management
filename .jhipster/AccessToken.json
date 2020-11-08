@@ -1,0 +1,46 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "caseManagement",
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "accessToken",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "ticketSystemInstance",
+            "otherEntityRelationshipName": "accessToken",
+            "relationshipName": "ticketInstance",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "token",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "expirationDate",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "changelogDate": "20201108111723",
+    "dto": "no",
+    "searchEngine": false,
+    "service": "no",
+    "entityTableName": "access_token",
+    "databaseType": "sql",
+    "readOnly": false,
+    "jpaMetamodelFiltering": false,
+    "pagination": "infinite-scroll",
+    "microserviceName": "caseManagement",
+    "name": "AccessToken",
+    "applications": "*",
+    "skipClient": true
+}

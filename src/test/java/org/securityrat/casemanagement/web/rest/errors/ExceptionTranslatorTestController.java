@@ -1,5 +1,6 @@
 package org.securityrat.casemanagement.web.rest.errors;
 
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,6 +11,11 @@ import javax.validation.constraints.NotNull;
 
 @RestController
 public class ExceptionTranslatorTestController {
+
+    @GetMapping("/test/concurrency-failure")
+    public void concurrencyFailure() {
+        throw new ConcurrencyFailureException("test concurrency failure");
+    }
 
     @PostMapping("/test/method-argument")
     public void methodArgument(@Valid @RequestBody TestDTO testDTO) {

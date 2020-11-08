@@ -2,12 +2,16 @@ package org.securityrat.casemanagement.service.dto;
 
 import org.securityrat.casemanagement.config.Constants;
 
+import org.securityrat.casemanagement.domain.Authority;
+import org.securityrat.casemanagement.domain.User;
 
 import javax.validation.constraints.*;
+import java.time.Instant;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * A DTO representing a user, with his authorities.
+ * A DTO representing a appUser, with his authorities.
  */
 public class UserDTO {
 
@@ -36,7 +40,37 @@ public class UserDTO {
     @Size(min = 2, max = 10)
     private String langKey;
 
+    private String createdBy;
+
+    private Instant createdDate;
+
+    private String lastModifiedBy;
+
+    private Instant lastModifiedDate;
+
     private Set<String> authorities;
+
+    public UserDTO() {
+        // Empty constructor needed for Jackson.
+    }
+
+    public UserDTO(User appUser) {
+        this.id = appUser.getId();
+        this.login = appUser.getLogin();
+        this.firstName = appUser.getFirstName();
+        this.lastName = appUser.getLastName();
+        this.email = appUser.getEmail();
+        this.activated = appUser.getActivated();
+        this.imageUrl = appUser.getImageUrl();
+        this.langKey = appUser.getLangKey();
+        this.createdBy = appUser.getCreatedBy();
+        this.createdDate = appUser.getCreatedDate();
+        this.lastModifiedBy = appUser.getLastModifiedBy();
+        this.lastModifiedDate = appUser.getLastModifiedDate();
+        this.authorities = appUser.getAuthorities().stream()
+            .map(Authority::getName)
+            .collect(Collectors.toSet());
+    }
 
     public String getId() {
         return id;
@@ -102,6 +136,38 @@ public class UserDTO {
         this.langKey = langKey;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Instant getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public Set<String> getAuthorities() {
         return authorities;
     }
@@ -120,6 +186,10 @@ public class UserDTO {
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +
+            ", createdBy=" + createdBy +
+            ", createdDate=" + createdDate +
+            ", lastModifiedBy='" + lastModifiedBy + '\'' +
+            ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
             "}";
     }

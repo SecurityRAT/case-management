@@ -43,6 +43,14 @@ public class ExceptionTranslatorIT {
     }
 
     @Test
+    public void testConcurrencyFailure() throws Exception {
+        mockMvc.perform(get("/test/concurrency-failure"))
+            .andExpect(status().isConflict())
+            .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.message").value(ErrorConstants.ERR_CONCURRENCY_FAILURE));
+    }
+
+    @Test
     public void testMethodArgumentNotValid() throws Exception {
          mockMvc.perform(post("/test/method-argument").content("{}").contentType(MediaType.APPLICATION_JSON))
              .andExpect(status().isBadRequest())

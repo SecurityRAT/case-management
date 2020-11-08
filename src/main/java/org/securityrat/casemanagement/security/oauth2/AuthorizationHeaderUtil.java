@@ -88,7 +88,7 @@ public class AuthorizationHeaderUtil {
     private String refreshToken(OAuth2AuthorizedClient client, OAuth2AuthenticationToken oauthToken) {
         OAuth2AccessTokenResponse atr = refreshTokenClient(client);
         if (atr == null || atr.getAccessToken() == null) {
-            log.info("Failed to refresh token for user");
+            log.info("Failed to refresh token for appUser");
             return null;
         }
 

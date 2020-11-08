@@ -42,8 +42,8 @@ public class SecurityUtilsUnitTest {
             Instant.now().plusSeconds(60), claims);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(AuthoritiesConstants.USER));
-        OidcUser user = new DefaultOidcUser(authorities, idToken);
-        OAuth2AuthenticationToken bla = new OAuth2AuthenticationToken(user, authorities, "oidc");
+        OidcUser appUser = new DefaultOidcUser(authorities, idToken);
+        OAuth2AuthenticationToken bla = new OAuth2AuthenticationToken(appUser, authorities, "oidc");
         securityContext.setAuthentication(bla);
         SecurityContextHolder.setContext(securityContext);
 
@@ -77,7 +77,7 @@ public class SecurityUtilsUnitTest {
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(AuthoritiesConstants.USER));
-        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("user", "user", authorities));
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("appUser", "appUser", authorities));
         SecurityContextHolder.setContext(securityContext);
 
         assertThat(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.USER)).isTrue();
