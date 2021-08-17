@@ -131,7 +131,6 @@ public class RequirementManagementAPIService {
      */
     public List<GenericAttributeGatewayDTO> generateGatewayAttributeDTO(List<AttributeDTO> attributes) {
         List<GenericAttributeGatewayDTO> genericGatewayAttributes = new ArrayList<>();
-
         for (AttributeDTO attrDto : attributes) {
             // Checks whether the attribute key is already in array
             List<GenericAttributeGatewayDTO> foundAttributeKeys = genericGatewayAttributes.stream()
@@ -140,20 +139,21 @@ public class RequirementManagementAPIService {
 
             if (foundAttributeKeys.isEmpty()) {
                 // add a new entry to result array
-                genericAttribute = new GenericAttributeGatewayDTO(attrDto.getAttributeKey().getId(),
-                    attrDto.getAttributeKey().getName(), attrDto.getAttributeKey().getType(),
-                    attrDto.getAttributeKey().getDescription(), attrDto.getAttributeKey().getShowOrder());
-                List<AttributeDTO> values = new ArrayList<>();
-                values.add(attrDto);
-                genericAttribute.setValues(values);
-                genericGatewayAttributes.add(genericAttribute);
+                if (attrDto.getAttributeKey() != null) {
+                    genericAttribute = new GenericAttributeGatewayDTO(attrDto.getAttributeKey().getId(),
+                        attrDto.getAttributeKey().getName(), attrDto.getAttributeKey().getType(),
+                        attrDto.getAttributeKey().getDescription(), attrDto.getAttributeKey().getShowOrder());
+                    List<AttributeDTO> values = new ArrayList<>();
+                    values.add(attrDto);
+                    genericAttribute.setValues(values);
+                    genericGatewayAttributes.add(genericAttribute);
+                }
             } else {
                 // update the values array (attributes list for particular attribute key)
                 genericAttribute = foundAttributeKeys.get(0);
                 genericAttribute.getValues().add(attrDto);
             }
         }
-
         return genericGatewayAttributes;
     }
 

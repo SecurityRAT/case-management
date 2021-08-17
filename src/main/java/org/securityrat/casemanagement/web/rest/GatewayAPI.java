@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +27,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class GatewayAPI {
-
 	private final Logger log = LoggerFactory.getLogger(GatewayAPI.class);
 
 	@Autowired
@@ -58,7 +56,7 @@ public class GatewayAPI {
 	 * @return the ResponseEntity with status 200 (OK) and the list of parameters in
 	 *         body
 	 */
-	@RequestMapping(value="/parameters", method=RequestMethod.GET, params="requirementSet")
+	@GetMapping(value="/parameters", params="requirementSet")
 	@Timed
 	public ResponseEntity<List<GenericAttributeGatewayDTO>> getParameters(
 			@RequestParam(value = "requirementSet") Long requirementSetId) {
@@ -76,7 +74,7 @@ public class GatewayAPI {
 	 * @return the ResponseEntity with status 200 (OK) and the list of parameters in
 	 *         body
 	 */
-	@RequestMapping(method=RequestMethod.GET, value="/parameters", params="ids")
+	@GetMapping(value="/parameters", params="ids")
 	@Timed
 	public ResponseEntity<List<GenericAttributeGatewayDTO>> getParametersByIds(
 			@RequestParam(value = "ids") String paramterValueIds) {
