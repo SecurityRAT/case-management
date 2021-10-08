@@ -147,4 +147,8 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  ticketsystem: JIRASERVER # JIRACLOUD
+  jira-server:
+    private-key-pkcs8-path:
+    consumer-key:

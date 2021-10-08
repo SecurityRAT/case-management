@@ -38,8 +38,8 @@ public class TicketSystemInstanceResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final TicketSystem DEFAULT_TYPE = TicketSystem.JIRA;
-    private static final TicketSystem UPDATED_TYPE = TicketSystem.JIRA;
+    private static final TicketSystem DEFAULT_TYPE = TicketSystem.JIRASERVER;
+    private static final TicketSystem UPDATED_TYPE = TicketSystem.JIRASERVER;
 
     private static final String DEFAULT_URL = "AAAAAAAAAA";
     private static final String UPDATED_URL = "BBBBBBBBBB";
@@ -201,7 +201,7 @@ public class TicketSystemInstanceResourceIT {
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL)));
     }
-    
+
     @Test
     @Transactional
     public void getTicketSystemInstance() throws Exception {
