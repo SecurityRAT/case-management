@@ -4,13 +4,7 @@ package org.securityrat.casemanagement.web.rest;
 import io.micrometer.core.annotation.Timed;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
 import org.securityrat.casemanagement.service.RequirementManagementAPIService;
-import org.securityrat.casemanagement.service.dto.AttributeDTO;
-import org.securityrat.casemanagement.service.dto.ExtensionKeyDTO;
-import org.securityrat.casemanagement.service.dto.GenericAttributeGatewayDTO;
-import org.securityrat.casemanagement.service.dto.GenericExtensionDTO;
-import org.securityrat.casemanagement.service.dto.RequirementDTO;
-import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
-import org.securityrat.casemanagement.service.dto.RequirementStructureDTO;
+import org.securityrat.casemanagement.service.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +32,7 @@ public class GatewayAPI {
 	 * @return the ResponseEntity with status 200 (OK) and the list of
 	 *         requirementSets in body
 	 */
+
 	@GetMapping("/requirementSets")
 	@Timed
 	public ResponseEntity<List<RequirementSetDTO>> getActiveRequirementSets() {
@@ -86,6 +81,32 @@ public class GatewayAPI {
 				.generateGatewayAttributeDTO(attributes);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
+    /**
+     * GET /attributeKeys?requirementSet : Get list of attribute keys in a given requirement set.
+     *
+     * @param requirementSetId
+     *            RequirementSet id.
+     * @param type
+     *            attributeKey type
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributeKeys in
+     *         body
+     */
+    @GetMapping(value="/attributeKeys", params = {"requirementSet", "type"})
+    @Timed
+    public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByRequirementSet(
+        @RequestParam(value = "requirementSet") String requirementSetId,
+        @RequestParam(value= "type") String type) {
+        log.info("REST request to get attributeKeys active parameters for a given requirementSet");
+        Long requirementSet = Long.parseLong(requirementSetId);
+        List<AttributeKeyDTO> attributeKeys = requirementManagementAPIService.getAttributeKeysByRequirementSet(requirementSet, type);
+
+        // implement GenericAttributeKeyGatewayDTO in case necessary
+        //List<GenericAttributeKeyGatewayDTO> result = requirementManagementAPIService
+        //    .generateGatewayAttributeKeyDTO(attributeKeys);
+        return new ResponseEntity<>(attributeKeys, HttpStatus.OK);
+    } 
 
 	/**
 	 * GET /parameters?requirementSet : Get all tags for a given requirementSet.
@@ -187,5 +208,8 @@ public class GatewayAPI {
 
 		return requirementManagementAPIService.generateGatewayAttributeDTO(attributes);
 	}
+
+
+
 
 }

@@ -37,6 +37,10 @@ public class RequirementManagementAPIService {
         return this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true, type);
     }
 
+    public List<AttributeKeyDTO> getAttributeKeysByRequirementSet(Long requirementSet, String type) {
+        return this.requirementManagementServiceClient.getAttributeKeysByRequirementSetFromRequirementManagement(true, type, requirementSet);
+    }
+
     /**
      * Get active attributes in a given requirement set and with attributes key type
      * present in a given list of types
@@ -123,7 +127,7 @@ public class RequirementManagementAPIService {
     }
 
     /**
-     * Restructure the given list of attributes to be conform with the
+     * Restructure the given list of attributes to conform with the
      * {@link GenericAttributeGatewayDTO}
      *
      * @param attributes list of attributes
@@ -423,5 +427,4 @@ public class RequirementManagementAPIService {
 
         return result;
     }
-
 }
