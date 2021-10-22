@@ -37,8 +37,12 @@ public class RequirementManagementAPIService {
         return this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true, type);
     }
 
-    public List<AttributeKeyDTO> getAttributeKeysByRequirementSet(Long requirementSet, String type) {
-        return this.requirementManagementServiceClient.getAttributeKeysByRequirementSetFromRequirementManagement(true, type, requirementSet);
+    public List<AttributeKeyDTO> getAttributeKeysByRequirementSet(Long requirementSetId, String type) {
+        return this.requirementManagementServiceClient.getAttributeKeysByRequirementSetFromRequirementManagement(true, type, requirementSetId);
+    }
+
+    public List<AttributeDTO> getAttributesByRequirementSet(Long requirementSet, String type) {
+        return this.requirementManagementServiceClient.getAttributesByRequirementSetFromRequirementManagement(true, type, requirementSet);
     }
 
     /**
