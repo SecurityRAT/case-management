@@ -44,12 +44,12 @@ public interface RequirementManagementServiceClient {
      *
      * @return List of Attributes as returned by requirement management.
      */
-    @RequestMapping(value = "/api/attributes")
+/*    @RequestMapping(value = "/api/attributes")
     List<AttributeDTO> getAttributesByRequirementSetFromRequirementManagement(
         @RequestParam(value = "active.equals") Boolean active,
         @RequestParam(value = "type.equals") String attributeType,
-        @RequestParam(value = "requirementSet.equals") Long requirementSet
-    );
+        @RequestParam(value = "requirementSetId.equals") Long requirementSet
+    );*/
 
 
     /**

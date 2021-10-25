@@ -41,9 +41,9 @@ public class RequirementManagementAPIService {
         return this.requirementManagementServiceClient.getAttributeKeysByRequirementSetFromRequirementManagement(true, type, requirementSetId);
     }
 
-    public List<AttributeDTO> getAttributesByRequirementSet(Long requirementSet, String type) {
-        return this.requirementManagementServiceClient.getAttributesByRequirementSetFromRequirementManagement(true, type, requirementSet);
-    }
+/*    public List<AttributeDTO> getAttributesByRequirementSet(Long requirementSetId, String type) {
+        return this.requirementManagementServiceClient.getAttributesByRequirementSetFromRequirementManagement(true, type, requirementSetId);
+    }*/
 
     /**
      * Get active attributes in a given requirement set and with attributes key type
@@ -59,6 +59,7 @@ public class RequirementManagementAPIService {
 
         if (result != null) {
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
+                && attributeDTO.getAttributeKey().getRequirementSet() != null
                 && !attributeDTO.getAttributeKey().getRequirementSet().getId().equals(requirementSetId));
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
                 && !attributeDTO.getAttributeKey().isActive()); // include only attributes with active attributeKey

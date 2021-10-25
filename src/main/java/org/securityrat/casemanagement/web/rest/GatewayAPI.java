@@ -93,13 +93,12 @@ public class GatewayAPI {
      * @return the ResponseEntity with status 200 (OK) and the list of attributeKeys in
      *         body
      */
-    @GetMapping(value="/attributeKeys", params = {"requirementSet", "type"})
+    @GetMapping(value="/attributeKeys")
     @Timed
     public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByRequirementSet(
-        @RequestParam(value = "requirementSet") String requirementSet,
+        @RequestParam(value = "requirementSet") Long requirementSetId,
         @RequestParam(value= "type") String type) {
         log.info("REST request to get attributeKeys active parameters for a given requirementSet");
-        Long requirementSetId = Long.parseLong(requirementSet);
         List<AttributeKeyDTO> attributeKeys = requirementManagementAPIService.getAttributeKeysByRequirementSet(requirementSetId, type);
 
         // implement GenericAttributeKeyGatewayDTO if necessary
@@ -119,21 +118,14 @@ public class GatewayAPI {
      * @return the ResponseEntity with status 200 (OK) and the list of attributes in
      *         body
      */
-/*    @GetMapping(value="/attributes", params = {"requirementSet", "type"})
+    @GetMapping(value="/attributes")
     @Timed
-    //TODO: check that the AttributeDTO & generalAttributeGatewayDTO - what is the difference
     public ResponseEntity<List<GenericAttributeGatewayDTO>> getAttributesByRequirementSet(
-        @RequestParam(value = "requirementSet") String requirementSetId,
-        @RequestParam(value= "type") String type) {
-        log.info("REST request to get attributes active parameters for a given requirementSet");
-        Long requirementSet = Long.parseLong(requirementSetId);
-        List<AttributeDTO> attributes = requirementManagementAPIService.getAttributesByRequirementSet(requirementSet, type);
-
-        // change to GenericAttributeGatewayDTO if necessary
-        List<GenericAttributeGatewayDTO> result = requirementManagementAPIService
-            .generateGatewayAttributeDTO(attributes);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
+        @RequestParam(value = "requirementSet") Long requirementSetId,
+        @RequestParam(value= "type") AttributeType type) {
+        log.info("REST request to get active attributes for RequirementSet with ID {} and type {}", requirementSetId, type);
+        return new ResponseEntity<>(this.getAttributes(requirementSetId, type), HttpStatus.OK);
+    }
 
 	/**
 	 * GET /parameters?requirementSet : Get all tags for a given requirementSet.
