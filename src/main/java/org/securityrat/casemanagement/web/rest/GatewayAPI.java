@@ -183,8 +183,8 @@ public class GatewayAPI {
 	 *
 	 * @param requirementSetId
 	 *            Id of requirementSet
-	 * @param List
-	 *            of parameter ids (comma seperated string)
+	 * @param attributeIds
+	 *            list of parameter ids (comma seperated string)
 	 * @return the ResponseEntity with status 200 (OK) and the list of requirements
 	 *         in body or 404 (Not found) if one of the specified IDs does not exist
 	 */
@@ -192,15 +192,15 @@ public class GatewayAPI {
 	@Timed
 	public ResponseEntity<List<RequirementDTO>> getRequirements(
 			@RequestParam(value = "requirementSet") Long requirementSetId,
-			@RequestParam(value = "parameters") String parameters) {
-		List<Long> params = new ArrayList<>();
-		if (parameters != null) {
-			for (String idAsString : parameters.split(",")) {
-				params.add(Long.parseLong(idAsString));
+			@RequestParam(value = "attributeIds") String attributeIds) {
+		List<Long> attributeIdsList = new ArrayList<>();
+		if (attributeIds != null) {
+			for (String idAsString : attributeIds.split(",")) {
+                attributeIdsList.add(Long.parseLong(idAsString));
 			}
 		}
 		List<RequirementDTO> result;
-		result = requirementManagementAPIService.getActiveRequirements(requirementSetId, params);
+		result = requirementManagementAPIService.getActiveRequirements(requirementSetId, attributeIdsList);
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}

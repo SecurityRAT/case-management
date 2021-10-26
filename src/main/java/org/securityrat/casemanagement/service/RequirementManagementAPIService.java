@@ -369,11 +369,11 @@ public class RequirementManagementAPIService {
      * Return a List of Requirements which have requested conditions.
      *
      * @param requirementSetId Id of RequirementSet we want to search for the Requirement
-     * @param parameters       Id of Parameters the Requirement
+     * @param attributeIdsList       Id of Attribute the Requirement
      * @return RequirementsDTO which has all the requested conditions
      */
-    public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> parameters) {
-        // TODO: currently we only build up the requirements without paying attention to the parameters
+    public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> attributeIdsList) {
+        // TODO: currently we only build up the requirements without paying attention to the attributeIds
 
         HashSet<SkeletonDTO> skeletonHashSet = new HashSet<>();
         HashSet<AttributeDTO> attributeHashSet = new HashSet<>();
@@ -383,7 +383,7 @@ public class RequirementManagementAPIService {
         List<RequirementDTO> result = new ArrayList<>();
 
         List<SkAtExDTO> skAtExDTOs = this.requirementManagementServiceClient
-            .getAllSkAtExFromRequirementManagement(true);
+            .getAllSkAtExFromRequirementManagement(true); //TODO remove active thing
         skAtExDTOs.removeIf(skAtExDTO -> !skAtExDTO.getSkeleton().getRequirementSet().getId().equals(requirementSetId));
 
         for (SkAtExDTO skAtExDTO : skAtExDTOs) {
