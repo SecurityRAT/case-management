@@ -42,8 +42,16 @@ public class RequirementManagementAPIService {
     }
 
     public List<AttributeKeyDTO> getAttributeKeysByIds(List<Long> ids) {
-        // TODO implement the filtering through ids
-        return this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true);
+        List<AttributeKeyDTO> result = this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true);
+
+        if (result != null){
+            result.removeIf(AttributeKeyDTO -> !ids.contains(AttributeKeyDTO.getId()));
+
+            if (result.size() < ids.size())
+                throw new IDNotFoundException(); // 404 if user requested non-existent ids
+        }
+
+        return result;
     }
 
 /*    public List<AttributeDTO> getAttributesByRequirementSet(Long requirementSetId, String type) {

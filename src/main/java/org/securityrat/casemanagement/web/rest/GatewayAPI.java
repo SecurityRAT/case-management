@@ -93,7 +93,7 @@ public class GatewayAPI {
      * @return the ResponseEntity with status 200 (OK) and the list of attributeKeys in
      *         body
      */
-    @GetMapping(value="/attributeKeys")
+    @GetMapping(value="/attributeKeys", params = {"requirementSet", "type"})
     @Timed
     public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByRequirementSet(
         @RequestParam(value = "requirementSet") Long requirementSetId,
@@ -120,7 +120,7 @@ public class GatewayAPI {
     @Timed
     public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByIds(
         @RequestParam(value= "ids") String attributeKeyIds) {
-        log.info("REST request to get all active attributeKeys in a given list of ids {}", attributeKeyIds;
+        log.info("REST request to get all active attributeKeys in a given list of ids {}", attributeKeyIds);
         List<Long> ids = this.parseStringToList(attributeKeyIds);
         List<AttributeKeyDTO> attributeKeys = requirementManagementAPIService.getAttributeKeysByIds(ids);
         return new ResponseEntity<>(attributeKeys, HttpStatus.OK);
