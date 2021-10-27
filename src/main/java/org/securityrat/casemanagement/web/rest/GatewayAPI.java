@@ -127,6 +127,28 @@ public class GatewayAPI {
         return new ResponseEntity<>(this.getAttributes(requirementSetId, type), HttpStatus.OK);
     }
 
+    /**
+     * GET /attributes?ids : Get list of attributes by ids.
+     *
+     * @param attributeIds
+     *            Attribute ids.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributes in
+     *         body
+     */
+    @GetMapping(value="/attributes", params="ids")
+    @Timed
+    public ResponseEntity<List<GenericAttributeGatewayDTO>> getAttributesByIds(
+        @RequestParam(value = "ids") String attributeIds) {
+        log.info("REST request to get all active attributes in a given list of ids {}", attributeIds);
+        List<Long> ids = this.parseStringToList(attributeIds);
+        List<AttributeDTO> attributes = requirementManagementAPIService.getAttributesByIds(ids);
+
+        List<GenericAttributeGatewayDTO> result = requirementManagementAPIService
+            .generateGatewayAttributeDTO(attributes);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 	/**
 	 * GET /parameters?requirementSet : Get all tags for a given requirementSet.
 	 *

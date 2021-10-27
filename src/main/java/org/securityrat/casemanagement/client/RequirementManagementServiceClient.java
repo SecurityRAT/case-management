@@ -95,7 +95,7 @@ public interface RequirementManagementServiceClient {
 	 * @return List of SkAtEx as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/sk-at-exes")
-	List<SkAtExDTO> getAllSkAtExFromRequirementManagement(@RequestParam(value = "active.equals") Boolean active);
+	List<SkAtExDTO> getAllSkAtExFromRequirementManagement();
 
 	/**
 	 * Get a list of all AttributeKeys from requirement management.

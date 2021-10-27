@@ -383,7 +383,7 @@ public class RequirementManagementAPIService {
         List<RequirementDTO> result = new ArrayList<>();
 
         List<SkAtExDTO> skAtExDTOs = this.requirementManagementServiceClient
-            .getAllSkAtExFromRequirementManagement(true); //TODO remove active thing
+            .getAllSkAtExFromRequirementManagement();
         skAtExDTOs.removeIf(skAtExDTO -> !skAtExDTO.getSkeleton().getRequirementSet().getId().equals(requirementSetId));
 
         for (SkAtExDTO skAtExDTO : skAtExDTOs) {
