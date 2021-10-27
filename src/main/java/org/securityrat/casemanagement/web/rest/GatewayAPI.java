@@ -85,7 +85,7 @@ public class GatewayAPI {
     /**
      * GET /attributeKeys?requirementSet&type : Get list of attribute keys in a given requirement set.
      *
-     * @param requirementSet
+     * @param requirementSetId
      *            RequirementSet id.
      * @param type
      *            attributeKey type
@@ -104,6 +104,25 @@ public class GatewayAPI {
         // implement GenericAttributeKeyGatewayDTO if necessary
         //List<GenericAttributeKeyGatewayDTO> result = requirementManagementAPIService
         //    .generateGatewayAttributeKeyDTO(attributeKeys);
+        return new ResponseEntity<>(attributeKeys, HttpStatus.OK);
+    }
+
+    /**
+     * GET /attributeKeys?ids : Get list of attribute keys with given ids.
+     *
+     * @param
+     *            attributeKeyIds ids
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributeKeys in
+     *         body
+     */
+    @GetMapping(value="/attributeKeys", params="ids")
+    @Timed
+    public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByIds(
+        @RequestParam(value= "ids") String attributeKeyIds) {
+        log.info("REST request to get all active attributeKeys in a given list of ids {}", attributeKeyIds;
+        List<Long> ids = this.parseStringToList(attributeKeyIds);
+        List<AttributeKeyDTO> attributeKeys = requirementManagementAPIService.getAttributeKeysByIds(ids);
         return new ResponseEntity<>(attributeKeys, HttpStatus.OK);
     }
 

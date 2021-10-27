@@ -41,6 +41,11 @@ public class RequirementManagementAPIService {
         return this.requirementManagementServiceClient.getAttributeKeysByRequirementSetFromRequirementManagement(true, type, requirementSetId);
     }
 
+    public List<AttributeKeyDTO> getAttributeKeysByIds(List<Long> ids) {
+        // TODO implement the filtering through ids
+        return this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true);
+    }
+
 /*    public List<AttributeDTO> getAttributesByRequirementSet(Long requirementSetId, String type) {
         return this.requirementManagementServiceClient.getAttributesByRequirementSetFromRequirementManagement(true, type, requirementSetId);
     }*/
