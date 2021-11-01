@@ -3,6 +3,7 @@ package org.securityrat.casemanagement.web.rest;
 
 import io.micrometer.core.annotation.Timed;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
+import org.securityrat.casemanagement.domain.enumeration.ExtensionSection;
 import org.securityrat.casemanagement.service.RequirementManagementAPIService;
 import org.securityrat.casemanagement.service.dto.*;
 import org.slf4j.Logger;
@@ -246,8 +247,49 @@ public class GatewayAPI {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+    /**
+     * GET /enhancements : Get enhancements for given requirementSet.
+     *
+     * @param requirementSetId
+     *            Id of requirementSet
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of (ExtentionKey) enahncements
+     *         in body or 404 (Not found) if one of the specified IDs does not exist
+     */
+    @GetMapping("/enhancements")
+    @Timed
+    public ResponseEntity<List<ExtensionKeyDTO>> getEnhancements(
+        @RequestParam(value = "requirementSet") Long requirementSetId) {
 
-	/**
+        List<ExtensionKeyDTO> result;
+        result = requirementManagementAPIService.getActiveExtensionKeysOfExtensionSection(requirementSetId, ExtensionSection.ENHANCEMENT);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * GET /status : Get status for given requirementSet.
+     *
+     * @param requirementSetId
+     *            Id of requirementSet
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of (ExtentionKey) status
+     *         in body or 404 (Not found) if one of the specified IDs does not exist
+     */
+    @GetMapping("/status")
+    @Timed
+    public ResponseEntity<List<ExtensionKeyDTO>> getStatus(
+        @RequestParam(value = "requirementSet") Long requirementSetId) {
+
+        List<ExtensionKeyDTO> result;
+        result = requirementManagementAPIService.getActiveExtensionKeysOfExtensionSection(requirementSetId, ExtensionSection.STATUS);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+    /**
 	 * Parse a comma separated string to long values.
 	 * @param values comma separated string
 	 * @return

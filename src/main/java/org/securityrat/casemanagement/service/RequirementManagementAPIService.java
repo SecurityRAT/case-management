@@ -192,6 +192,23 @@ public class RequirementManagementAPIService {
         return activeExtensionKeys;
     }
 
+    public List<ExtensionKeyDTO> getActiveExtensionKeysOfExtensionSection(Long requirementSetId, ExtensionSection extensionSection) {
+        List<ExtensionKeyDTO> activeExtensionKeys = this.requirementManagementServiceClient
+            .getAllExtensionKeysFromRequirementManagement(true);
+
+        // filter for requirement set
+        activeExtensionKeys.removeIf(ex -> !ex.getRequirementSet().getId().equals(requirementSetId));
+        // filter for extension section
+        activeExtensionKeys.removeIf(ex -> !ex.getSection().equals(extensionSection));
+
+        if (activeExtensionKeys.isEmpty()) {
+            log.error("Empty list of extension key to requirementSetId {} and extensionSection {}", requirementSetId, extensionSection);
+            throw new IDNotFoundException();
+        }
+
+        return activeExtensionKeys;
+    }
+
     public List<GenericExtensionDTO> getActiveExtensionForReqStructure(Long requirementSetId) {
         List<GenericExtensionDTO> result = this.requirementManagementServiceClient
             .getAllExtensionsFromRequirementManagement(true);
@@ -349,7 +366,7 @@ public class RequirementManagementAPIService {
 
             } else {
                 // if we already have the extensionKey in our list, we need to check if we
-                // have all extension with the extensiionKey
+                // have all extension with the extensionKey
                 for (EnhancementForReqDTO enhancement : requirement.getEnhancements()) {
 
                     if (enhancement.getKeyId().equals(extension.getExtensionKey().getId())) {
@@ -386,7 +403,7 @@ public class RequirementManagementAPIService {
      * @return RequirementsDTO which has all the requested conditions
      */
     public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> attributeIdsList) {
-        // TODO: currently we only build up the requirements without paying attention to the attributeIds
+        // TODO currently we only build up the requirements without paying attention to the attributeIds
 
         HashSet<SkeletonDTO> skeletonHashSet = new HashSet<>();
         HashSet<AttributeDTO> attributeHashSet = new HashSet<>();
