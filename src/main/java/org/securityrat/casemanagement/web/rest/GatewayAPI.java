@@ -3,14 +3,9 @@ package org.securityrat.casemanagement.web.rest;
 
 import io.micrometer.core.annotation.Timed;
 import org.securityrat.casemanagement.domain.enumeration.AttributeType;
+import org.securityrat.casemanagement.domain.enumeration.ExtensionSection;
 import org.securityrat.casemanagement.service.RequirementManagementAPIService;
-import org.securityrat.casemanagement.service.dto.AttributeDTO;
-import org.securityrat.casemanagement.service.dto.ExtensionKeyDTO;
-import org.securityrat.casemanagement.service.dto.GenericAttributeGatewayDTO;
-import org.securityrat.casemanagement.service.dto.GenericExtensionDTO;
-import org.securityrat.casemanagement.service.dto.RequirementDTO;
-import org.securityrat.casemanagement.service.dto.RequirementSetDTO;
-import org.securityrat.casemanagement.service.dto.RequirementStructureDTO;
+import org.securityrat.casemanagement.service.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +33,7 @@ public class GatewayAPI {
 	 * @return the ResponseEntity with status 200 (OK) and the list of
 	 *         requirementSets in body
 	 */
+
 	@GetMapping("/requirementSets")
 	@Timed
 	public ResponseEntity<List<RequirementSetDTO>> getActiveRequirementSets() {
@@ -86,6 +82,92 @@ public class GatewayAPI {
 				.generateGatewayAttributeDTO(attributes);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
+    /**
+     * GET /attributeKeys?requirementSet&type : Get list of attribute keys in a given requirement set.
+     *
+     * @param requirementSetId
+     *            RequirementSet id.
+     * @param type
+     *            attributeKey type
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributeKeys in
+     *         body
+     */
+    @GetMapping(value="/attributeKeys", params = {"requirementSet", "type"})
+    @Timed
+    public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByRequirementSet(
+        @RequestParam(value = "requirementSet") Long requirementSetId,
+        @RequestParam(value= "type") String type) {
+        log.info("REST request to get attributeKeys active parameters for a given requirementSet");
+        List<AttributeKeyDTO> attributeKeys = requirementManagementAPIService.getAttributeKeysByRequirementSet(requirementSetId, type);
+
+        // implement GenericAttributeKeyGatewayDTO if necessary
+        //List<GenericAttributeKeyGatewayDTO> result = requirementManagementAPIService
+        //    .generateGatewayAttributeKeyDTO(attributeKeys);
+        return new ResponseEntity<>(attributeKeys, HttpStatus.OK);
+    }
+
+    /**
+     * GET /attributeKeys?ids : Get list of attribute keys with given ids.
+     *
+     * @param
+     *            attributeKeyIds ids
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributeKeys in
+     *         body
+     */
+    @GetMapping(value="/attributeKeys", params="ids")
+    @Timed
+    public ResponseEntity<List<AttributeKeyDTO>> getAttributeKeysByIds(
+        @RequestParam(value= "ids") String attributeKeyIds) {
+        log.info("REST request to get all active attributeKeys in a given list of ids {}", attributeKeyIds);
+        List<Long> ids = this.parseStringToList(attributeKeyIds);
+        List<AttributeKeyDTO> attributeKeys = requirementManagementAPIService.getAttributeKeysByIds(ids);
+        return new ResponseEntity<>(attributeKeys, HttpStatus.OK);
+    }
+
+    /**
+     * GET /attributes?requirementSet&type : Get list of attributes in a given requirement set.
+     *
+     * @param requirementSetId
+     *            RequirementSet id.
+     * @param type
+     *            attribute type
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributes in
+     *         body
+     */
+    @GetMapping(value="/attributes")
+    @Timed
+    public ResponseEntity<List<GenericAttributeGatewayDTO>> getAttributesByRequirementSet(
+        @RequestParam(value = "requirementSet") Long requirementSetId,
+        @RequestParam(value= "type") AttributeType type) {
+        log.info("REST request to get active attributes for RequirementSet with ID {} and type {}", requirementSetId, type);
+        return new ResponseEntity<>(this.getAttributes(requirementSetId, type), HttpStatus.OK);
+    }
+
+    /**
+     * GET /attributes?ids : Get list of attributes by ids.
+     *
+     * @param attributeIds
+     *            Attribute ids.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of attributes in
+     *         body
+     */
+    @GetMapping(value="/attributes", params="ids")
+    @Timed
+    public ResponseEntity<List<GenericAttributeGatewayDTO>> getAttributesByIds(
+        @RequestParam(value = "ids") String attributeIds) {
+        log.info("REST request to get all active attributes in a given list of ids {}", attributeIds);
+        List<Long> ids = this.parseStringToList(attributeIds);
+        List<AttributeDTO> attributes = requirementManagementAPIService.getAttributesByIds(ids);
+
+        List<GenericAttributeGatewayDTO> result = requirementManagementAPIService
+            .generateGatewayAttributeDTO(attributes);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 	/**
 	 * GET /parameters?requirementSet : Get all tags for a given requirementSet.
@@ -143,8 +225,8 @@ public class GatewayAPI {
 	 *
 	 * @param requirementSetId
 	 *            Id of requirementSet
-	 * @param List
-	 *            of parameter ids (comma seperated string)
+	 * @param attributeIds
+	 *            list of parameter ids (comma seperated string)
 	 * @return the ResponseEntity with status 200 (OK) and the list of requirements
 	 *         in body or 404 (Not found) if one of the specified IDs does not exist
 	 */
@@ -152,21 +234,62 @@ public class GatewayAPI {
 	@Timed
 	public ResponseEntity<List<RequirementDTO>> getRequirements(
 			@RequestParam(value = "requirementSet") Long requirementSetId,
-			@RequestParam(value = "parameters") String parameters) {
-		List<Long> params = new ArrayList<>();
-		if (parameters != null) {
-			for (String idAsString : parameters.split(",")) {
-				params.add(Long.parseLong(idAsString));
+			@RequestParam(value = "attributeIds") String attributeIds) {
+		List<Long> attributeIdsList = new ArrayList<>();
+		if (attributeIds != null) {
+			for (String idAsString : attributeIds.split(",")) {
+                attributeIdsList.add(Long.parseLong(idAsString));
 			}
 		}
 		List<RequirementDTO> result;
-		result = requirementManagementAPIService.getActiveRequirements(requirementSetId, params);
+		result = requirementManagementAPIService.getActiveRequirements(requirementSetId, attributeIdsList);
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+    /**
+     * GET /enhancements : Get enhancements for given requirementSet.
+     *
+     * @param requirementSetId
+     *            Id of requirementSet
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of (ExtentionKey) enahncements
+     *         in body or 404 (Not found) if one of the specified IDs does not exist
+     */
+    @GetMapping("/enhancements")
+    @Timed
+    public ResponseEntity<List<ExtensionKeyDTO>> getEnhancements(
+        @RequestParam(value = "requirementSet") Long requirementSetId) {
 
-	/**
+        List<ExtensionKeyDTO> result;
+        result = requirementManagementAPIService.getActiveExtensionKeysOfExtensionSection(requirementSetId, ExtensionSection.ENHANCEMENT);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * GET /status : Get status for given requirementSet.
+     *
+     * @param requirementSetId
+     *            Id of requirementSet
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of (ExtentionKey) status
+     *         in body or 404 (Not found) if one of the specified IDs does not exist
+     */
+    @GetMapping("/status")
+    @Timed
+    public ResponseEntity<List<ExtensionKeyDTO>> getStatus(
+        @RequestParam(value = "requirementSet") Long requirementSetId) {
+
+        List<ExtensionKeyDTO> result;
+        result = requirementManagementAPIService.getActiveExtensionKeysOfExtensionSection(requirementSetId, ExtensionSection.STATUS);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+    /**
 	 * Parse a comma separated string to long values.
 	 * @param values comma separated string
 	 * @return
@@ -187,5 +310,8 @@ public class GatewayAPI {
 
 		return requirementManagementAPIService.generateGatewayAttributeDTO(attributes);
 	}
+
+
+
 
 }

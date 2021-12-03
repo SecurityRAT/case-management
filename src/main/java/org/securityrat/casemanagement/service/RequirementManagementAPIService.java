@@ -37,6 +37,27 @@ public class RequirementManagementAPIService {
         return this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true, type);
     }
 
+    public List<AttributeKeyDTO> getAttributeKeysByRequirementSet(Long requirementSetId, String type) {
+        return this.requirementManagementServiceClient.getAttributeKeysByRequirementSetFromRequirementManagement(true, type, requirementSetId);
+    }
+
+    public List<AttributeKeyDTO> getAttributeKeysByIds(List<Long> ids) {
+        List<AttributeKeyDTO> result = this.requirementManagementServiceClient.getAttributeKeysFromRequirementManagement(true);
+
+        if (result != null){
+            result.removeIf(AttributeKeyDTO -> !ids.contains(AttributeKeyDTO.getId()));
+
+            if (result.size() < ids.size())
+                throw new IDNotFoundException(); // 404 if user requested non-existent ids
+        }
+
+        return result;
+    }
+
+/*    public List<AttributeDTO> getAttributesByRequirementSet(Long requirementSetId, String type) {
+        return this.requirementManagementServiceClient.getAttributesByRequirementSetFromRequirementManagement(true, type, requirementSetId);
+    }*/
+
     /**
      * Get active attributes in a given requirement set and with attributes key type
      * present in a given list of types
@@ -51,6 +72,7 @@ public class RequirementManagementAPIService {
 
         if (result != null) {
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
+                && attributeDTO.getAttributeKey().getRequirementSet() != null
                 && !attributeDTO.getAttributeKey().getRequirementSet().getId().equals(requirementSetId));
             result.removeIf(attributeDTO -> attributeDTO.getAttributeKey() != null
                 && !attributeDTO.getAttributeKey().isActive()); // include only attributes with active attributeKey
@@ -123,7 +145,7 @@ public class RequirementManagementAPIService {
     }
 
     /**
-     * Restructure the given list of attributes to be conform with the
+     * Restructure the given list of attributes to conform with the
      * {@link GenericAttributeGatewayDTO}
      *
      * @param attributes list of attributes
@@ -164,6 +186,23 @@ public class RequirementManagementAPIService {
 
         if (activeExtensionKeys.isEmpty()) {
             log.error("Empty list of extension key to requirementSetId {}", requirementSetId);
+            throw new IDNotFoundException();
+        }
+
+        return activeExtensionKeys;
+    }
+
+    public List<ExtensionKeyDTO> getActiveExtensionKeysOfExtensionSection(Long requirementSetId, ExtensionSection extensionSection) {
+        List<ExtensionKeyDTO> activeExtensionKeys = this.requirementManagementServiceClient
+            .getAllExtensionKeysFromRequirementManagement(true);
+
+        // filter for requirement set
+        activeExtensionKeys.removeIf(ex -> !ex.getRequirementSet().getId().equals(requirementSetId));
+        // filter for extension section
+        activeExtensionKeys.removeIf(ex -> !ex.getSection().equals(extensionSection));
+
+        if (activeExtensionKeys.isEmpty()) {
+            log.error("Empty list of extension key to requirementSetId {} and extensionSection {}", requirementSetId, extensionSection);
             throw new IDNotFoundException();
         }
 
@@ -327,7 +366,7 @@ public class RequirementManagementAPIService {
 
             } else {
                 // if we already have the extensionKey in our list, we need to check if we
-                // have all extension with the extensiionKey
+                // have all extension with the extensionKey
                 for (EnhancementForReqDTO enhancement : requirement.getEnhancements()) {
 
                     if (enhancement.getKeyId().equals(extension.getExtensionKey().getId())) {
@@ -360,11 +399,11 @@ public class RequirementManagementAPIService {
      * Return a List of Requirements which have requested conditions.
      *
      * @param requirementSetId Id of RequirementSet we want to search for the Requirement
-     * @param parameters       Id of Parameters the Requirement
+     * @param attributeIdsList       Id of Attribute the Requirement
      * @return RequirementsDTO which has all the requested conditions
      */
-    public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> parameters) {
-        // TODO: currently we only build up the requirements without paying attention to the parameters
+    public List<RequirementDTO> getActiveRequirements(Long requirementSetId, List<Long> attributeIdsList) {
+        // TODO currently we only build up the requirements without paying attention to the attributeIds
 
         HashSet<SkeletonDTO> skeletonHashSet = new HashSet<>();
         HashSet<AttributeDTO> attributeHashSet = new HashSet<>();
@@ -374,7 +413,7 @@ public class RequirementManagementAPIService {
         List<RequirementDTO> result = new ArrayList<>();
 
         List<SkAtExDTO> skAtExDTOs = this.requirementManagementServiceClient
-            .getAllSkAtExFromRequirementManagement(true);
+            .getAllSkAtExFromRequirementManagement();
         skAtExDTOs.removeIf(skAtExDTO -> !skAtExDTO.getSkeleton().getRequirementSet().getId().equals(requirementSetId));
 
         for (SkAtExDTO skAtExDTO : skAtExDTOs) {
@@ -423,5 +462,4 @@ public class RequirementManagementAPIService {
 
         return result;
     }
-
 }

@@ -39,12 +39,25 @@ public interface RequirementManagementServiceClient {
 	@RequestMapping(value = "/api/attributes")
 	List<AttributeDTO> getAllAttributesFromRequirementManagement();
 
-	/**
+    /**
+     * Get a list of RequirementSet-specific Attributes from requirement management.
+     *
+     * @return List of Attributes as returned by requirement management.
+     */
+/*    @RequestMapping(value = "/api/attributes")
+    List<AttributeDTO> getAttributesByRequirementSetFromRequirementManagement(
+        @RequestParam(value = "active.equals") Boolean active,
+        @RequestParam(value = "type.equals") String attributeType,
+        @RequestParam(value = "requirementSetId.equals") Long requirementSet
+    );*/
+
+
+    /**
 	 * Get a list of all ExtensionKeys from requirement management.
 	 *
 	 * param active Add the given value of type Boolean as a filter for the field
 	 * 'active' to the request to requirement management
-	 * 
+	 *
 	 * @return List of ExtensionKeys as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/extension-keys")
@@ -56,7 +69,7 @@ public interface RequirementManagementServiceClient {
 	 *
 	 * param active Add the given value of type Boolean as a filter for the field
 	 * 'active' to the request to requirement management
-	 * 
+	 *
 	 * @return List of Skeletons as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/skeletons")
@@ -67,7 +80,7 @@ public interface RequirementManagementServiceClient {
 	 *
 	 * param active Add the given value of type Boolean as a filter for the field
 	 * 'active' to the request to requirement management
-	 * 
+	 *
 	 * @return List of Extensions as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/extensions")
@@ -78,18 +91,18 @@ public interface RequirementManagementServiceClient {
 	 *
 	 * param active Add the given value of type Boolean as a filter for the field
 	 * 'active' to the request to requirement management
-	 * 
+	 *
 	 * @return List of SkAtEx as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/sk-at-exes")
-	List<SkAtExDTO> getAllSkAtExFromRequirementManagement(@RequestParam(value = "active.equals") Boolean active);
+	List<SkAtExDTO> getAllSkAtExFromRequirementManagement();
 
 	/**
 	 * Get a list of all AttributeKeys from requirement management.
 	 *
 	 * param active Add the given value of type Boolean as a filter for the field
 	 * 'active' to the request to requirement management
-	 * 
+	 *
 	 * @return List of AttributeKeys as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/attribute-keys")
@@ -104,13 +117,19 @@ public interface RequirementManagementServiceClient {
 	 *            'active' to the request to requirement management
 	 * @param attributeKeyType
 	 *            type of the attribute Keys to be requested.
-	 * 
+	 *
 	 * @return List of AttributeKeys as returned by requirement management.
 	 */
 	@RequestMapping(value = "/api/attribute-keys")
 	List<AttributeKeyDTO> getAttributeKeysFromRequirementManagement(
 			@RequestParam(value = "active.equals") Boolean active,
 			@RequestParam(value = "type.equals") String attributeKeyType);
+
+    @RequestMapping(value = "/api/attribute-keys")
+    List<AttributeKeyDTO> getAttributeKeysByRequirementSetFromRequirementManagement(
+        @RequestParam(value = "active.equals") Boolean active,
+        @RequestParam(value = "type.equals") String attributeKeyType,
+        @RequestParam(value = "requirementSetId.equals") Long requirementSetId);
 
 	@RequestMapping(value = "/api/sk-at-exes/{id}")
 	SkAtExDTO getSkAtExById(@RequestParam(value = "id") Integer id);
