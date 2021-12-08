@@ -16,8 +16,8 @@ public class JiraOAuthTokenFactory {
 
 
     public JiraOAuthTokenFactory(String jiraBaseUrl) {
-        this.accessTokenUrl = jiraBaseUrl + "/plugins/servlet/oauth/access-token";
-        requestTokenUrl = jiraBaseUrl + "/plugins/servlet/oauth/request-token";
+        this.accessTokenUrl = String.format("%s%s", jiraBaseUrl, "/plugins/servlet/oauth/access-token");
+        this.requestTokenUrl = String.format("%s%s", jiraBaseUrl, "/plugins/servlet/oauth/request-token");
     }
 
     /**
@@ -27,7 +27,7 @@ public class JiraOAuthTokenFactory {
      *
      * @param tmpToken    request token
      * @param secret      secret (verification code provided by JIRA after request token authorization)
-     * @param consumerKey consumer ey
+     * @param consumerKey consumer key
      * @param privateKey  private key in PKCS8 format
      * @return JiraOAuthGetAccessToken request
      * @throws NoSuchAlgorithmException

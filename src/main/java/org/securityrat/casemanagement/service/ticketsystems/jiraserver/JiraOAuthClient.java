@@ -2,21 +2,26 @@ package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
 
 import com.google.api.client.auth.oauth.OAuthAuthorizeTemporaryTokenUrl;
 import com.google.api.client.auth.oauth.OAuthCredentialsResponse;
+import org.securityrat.casemanagement.domain.TicketSystemInstance;
+import org.securityrat.casemanagement.domain.User;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+// todo add check that ticket instance exist and return error if not
 public class JiraOAuthClient {
 
-    public final String jiraBaseUrl;
+    private final String jiraBaseUrl;
+    private final User user;
     private final JiraOAuthTokenFactory oAuthGetAccessTokenFactory;
     private final String authorizationUrl;
 
-    public JiraOAuthClient() throws Exception {
-        jiraBaseUrl = "";
+    public JiraOAuthClient(TicketSystemInstance ticketSystemInstance, User user) throws Exception {
+        jiraBaseUrl = ticketSystemInstance.getUrl();
+        this.user = user;
         this.oAuthGetAccessTokenFactory = new JiraOAuthTokenFactory(this.jiraBaseUrl);
-        authorizationUrl = jiraBaseUrl + "/plugins/servlet/oauth/authorize";
+        authorizationUrl = String.format("%s %s", jiraBaseUrl, "/plugins/servlet/oauth/authorize");
     }
 
     /**

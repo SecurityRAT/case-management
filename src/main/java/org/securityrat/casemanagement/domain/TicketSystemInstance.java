@@ -2,6 +2,7 @@ package org.securityrat.casemanagement.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -23,15 +24,19 @@ public class TicketSystemInstance implements Serializable {
     private Long id;
 
     @Column(name = "name")
+    @Size(min = 2, max = 100)
     private String name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
+    // todo add validator with the enum values from org.securityrat.casemanagement.domain.enumeration
     private TicketSystem type;
 
     @NotNull
+    @URL
     @Column(name = "url", nullable = false)
+    // todo add validation for size limit
     private String url;
 
     @OneToMany(mappedBy = "ticketInstance")
