@@ -2,6 +2,8 @@ package org.securityrat.casemanagement.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import lombok.Getter;
 import org.hibernate.validator.constraints.URL;
 
 import java.io.Serializable;

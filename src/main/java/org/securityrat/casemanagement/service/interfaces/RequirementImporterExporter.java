@@ -6,7 +6,9 @@ public interface RequirementImporterExporter {
 
     boolean hasAuthenticationTokens();
 
-    void authenticateUserInTicketSystem();
+    void authenticateUser();
+
+    boolean isTicketInstanceValid();
 
     // todo: Change the return Type once DTO is available
     void exportRequirementSet(String requirementSet);

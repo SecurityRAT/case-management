@@ -2,13 +2,14 @@ package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
 
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
+import org.securityrat.casemanagement.service.Constants;
+import org.springframework.util.Base64Utils;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Base64;
 
 public class JiraOAuthTokenFactory {
     protected final String accessTokenUrl;
@@ -16,8 +17,8 @@ public class JiraOAuthTokenFactory {
 
 
     public JiraOAuthTokenFactory(String jiraBaseUrl) {
-        this.accessTokenUrl = String.format("%s%s", jiraBaseUrl, "/plugins/servlet/oauth/access-token");
-        this.requestTokenUrl = String.format("%s%s", jiraBaseUrl, "/plugins/servlet/oauth/request-token");
+        this.accessTokenUrl = String.format("%s%s", jiraBaseUrl, Constants.JIRASERVERACCESSTOKENPATH);
+        this.requestTokenUrl = String.format("%s%s", jiraBaseUrl, Constants.JIRASERVERREQUESTTOKENPATH);
     }
 
     /**
@@ -25,7 +26,7 @@ public class JiraOAuthTokenFactory {
      * by setting it to use POST method, secret, request token
      * and setting consumer and private keys.
      *
-     * @param tmpToken    request token
+     * @param tmpToken    temporary request token
      * @param secret      secret (verification code provided by JIRA after request token authorization)
      * @param consumerKey consumer key
      * @param privateKey  private key in PKCS8 format
@@ -55,12 +56,12 @@ public class JiraOAuthTokenFactory {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    public JiraOAuthGetTemporaryToken getTemporaryToken(String consumerKey, String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public JiraOAuthGetTemporaryToken getTemporaryToken(String consumerKey, String privateKey, String callback) throws NoSuchAlgorithmException, InvalidKeySpecException {
         JiraOAuthGetTemporaryToken oAuthGetTemporaryToken = new JiraOAuthGetTemporaryToken(requestTokenUrl);
         oAuthGetTemporaryToken.consumerKey = consumerKey;
         oAuthGetTemporaryToken.signer = getOAuthRsaSigner(privateKey);
         oAuthGetTemporaryToken.transport = new ApacheHttpTransport();
-        oAuthGetTemporaryToken.callback = "oob";
+        oAuthGetTemporaryToken.callback = callback;
         return oAuthGetTemporaryToken;
     }
 
@@ -85,7 +86,7 @@ public class JiraOAuthTokenFactory {
      * @throws InvalidKeySpecException
      */
     private PrivateKey getPrivateKey(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] privateBytes = Base64.getDecoder().decode(privateKey);
+        byte[] privateBytes = Base64Utils.decodeFromString(privateKey);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePrivate(keySpec);

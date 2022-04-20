@@ -27,6 +27,10 @@ public class AccessToken implements Serializable {
     @Column(name = "expiration_date")
     private ZonedDateTime expirationDate;
 
+    @NotNull
+    @Column(name = "salt", nullable = false)
+    private String salt;
+
     @ManyToOne
     @JsonIgnoreProperties("accessTokens")
     private User user;
@@ -68,6 +72,19 @@ public class AccessToken implements Serializable {
 
     public void setExpirationDate(ZonedDateTime expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public AccessToken salt(String salt) {
+        this.salt = salt;
+        return this;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public User getUser() {
@@ -119,6 +136,7 @@ public class AccessToken implements Serializable {
             "id=" + getId() +
             ", token='" + getToken() + "'" +
             ", expirationDate='" + getExpirationDate() + "'" +
+            ", salt='" + getSalt() + "'" +
             "}";
     }
 }

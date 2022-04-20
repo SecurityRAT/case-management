@@ -28,6 +28,13 @@
         {
             "fieldName": "expirationDate",
             "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "salt",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "changelogDate": "20201108111723",

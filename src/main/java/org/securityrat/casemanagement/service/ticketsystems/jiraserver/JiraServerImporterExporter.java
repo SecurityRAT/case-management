@@ -9,8 +9,13 @@ public class JiraServerImporterExporter implements RequirementImporterExporter {
     }
 
     @Override
-    public void authenticateUserInTicketSystem() {
+    public void authenticateUser() {
 
+    }
+
+    @Override
+    public boolean isTicketInstanceValid() {
+        return false;
     }
 
     @Override

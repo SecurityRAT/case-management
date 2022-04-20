@@ -129,7 +129,12 @@ jhipster:
 # ===================================================================
 
 application:
-  ticketsystem: JIRASERVER # JIRACLOUD
+  ticket-system:
+    type: JIRASERVER # JIRACLOUD
   jira-server:
-      private-key-pkcs8-path:
+      private-key: # private key in pkcs8 format
       consumer-key:
+      callback:
+  security:
+    aes:
+      secret-key: mylongsecret
