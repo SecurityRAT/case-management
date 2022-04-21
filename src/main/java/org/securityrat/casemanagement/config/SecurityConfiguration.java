@@ -3,23 +3,21 @@ package org.securityrat.casemanagement.config;
 import org.securityrat.casemanagement.security.*;
 
 import io.github.jhipster.config.JHipsterProperties;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.securityrat.casemanagement.security.oauth2.AudienceValidator;
-import org.securityrat.casemanagement.security.SecurityUtils;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.*;
 
 import org.securityrat.casemanagement.security.oauth2.JwtAuthorityExtractor;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
@@ -106,6 +104,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     AesEncryptionProperties generateAesEncryptionProperties() {
         String secretKey = applicationProperties.getSecurity().getAes().getSecretKey();
         return new AesEncryptionProperties(secretKey, KeyGenerators.string().generateKey());

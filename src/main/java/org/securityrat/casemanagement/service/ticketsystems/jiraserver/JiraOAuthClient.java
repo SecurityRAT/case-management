@@ -8,8 +8,6 @@ import org.securityrat.casemanagement.domain.TicketSystemInstance;
 import org.securityrat.casemanagement.service.TemporaryTokenProperties;
 import org.securityrat.casemanagement.service.interfaces.OAuthClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -17,8 +15,6 @@ import java.security.spec.InvalidKeySpecException;
 
 // todo add check that ticket instance exist and return error if not
 @Slf4j
-@Component
-@Transactional
 public class JiraOAuthClient implements OAuthClient {
 
     private final JiraOAuthTokenFactory oAuthGetAccessTokenFactory;

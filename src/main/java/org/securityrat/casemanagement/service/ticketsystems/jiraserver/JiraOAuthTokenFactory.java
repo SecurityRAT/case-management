@@ -2,7 +2,7 @@ package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
 
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
-import org.securityrat.casemanagement.service.Constants;
+import org.securityrat.casemanagement.config.Constants;
 import org.springframework.util.Base64Utils;
 
 import java.security.KeyFactory;
@@ -77,6 +77,7 @@ public class JiraOAuthTokenFactory {
         return oAuthRsaSigner;
     }
 
+    // todo: movee this to a configuration
     /**
      * Creates PrivateKey from string
      *
