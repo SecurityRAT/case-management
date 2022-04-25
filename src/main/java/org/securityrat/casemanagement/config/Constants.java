@@ -16,6 +16,8 @@ public final class Constants {
     public static final String JIRASERVERREQUESTTOKENPATH = "/plugins/servlet/oauth/request-token";
     public static final String JIRASERVERACCESSTOKENPATH = "/plugins/servlet/oauth/access-token";
 
+    public static final String PREFFEREDUSERPROPERTY = "preferred_username";
+
     private Constants() {
     }
 }

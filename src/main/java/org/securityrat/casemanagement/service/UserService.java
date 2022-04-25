@@ -209,8 +209,8 @@ public class UserService {
         } else {
             appUser.setId((String) details.get("sub"));
         }
-        if (details.get("preferred_username") != null) {
-            appUser.setLogin(((String) details.get("preferred_username")).toLowerCase());
+        if (details.get(Constants.PREFFEREDUSERPROPERTY) != null) {
+            appUser.setLogin(((String) details.get(Constants.PREFFEREDUSERPROPERTY)).toLowerCase());
         } else if (appUser.getLogin() == null) {
             appUser.setLogin(appUser.getId());
         }

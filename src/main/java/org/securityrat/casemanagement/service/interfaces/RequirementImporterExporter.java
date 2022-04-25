@@ -4,7 +4,7 @@ package org.securityrat.casemanagement.service.interfaces;
 public interface RequirementImporterExporter {
 
 
-    boolean hasAuthenticationTokens();
+    boolean hasAuthenticationToken();
 
     void authenticateUser();
 

@@ -1,5 +1,6 @@
 package org.securityrat.casemanagement.security;
 
+import org.securityrat.casemanagement.config.Constants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,7 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.util.Base64Utils;
 
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,11 +41,11 @@ public final class SecurityUtils {
                     UserDetails springSecurityUser = (UserDetails) authentication.getPrincipal();
                     return springSecurityUser.getUsername();
                 } else if (authentication instanceof JwtAuthenticationToken) {
-                    return (String) ((JwtAuthenticationToken)authentication).getToken().getClaims().get("preferred_username");
+                    return (String) ((JwtAuthenticationToken)authentication).getToken().getClaims().get(Constants.PREFFEREDUSERPROPERTY);
                 } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
                     Map<String, Object> attributes = ((DefaultOidcUser) authentication.getPrincipal()).getAttributes();
-                    if (attributes.containsKey("preferred_username")) {
-                        return (String) attributes.get("preferred_username");
+                    if (attributes.containsKey(Constants.PREFFEREDUSERPROPERTY)) {
+                        return (String) attributes.get(Constants.PREFFEREDUSERPROPERTY);
                     }
                 } else if (authentication.getPrincipal() instanceof String) {
                     return (String) authentication.getPrincipal();
@@ -96,5 +103,20 @@ public final class SecurityUtils {
             .filter(role -> role.startsWith("ROLE_"))
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Creates PrivateKey from string
+     *
+     * @param privateKey private key in PKCS8 format
+     * @return private key
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public static PrivateKey getPrivateKey(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] privateBytes = Base64Utils.decodeFromString(privateKey);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePrivate(keySpec);
     }
 }

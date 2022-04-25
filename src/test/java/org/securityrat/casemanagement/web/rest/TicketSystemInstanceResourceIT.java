@@ -112,7 +112,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void createTicketSystemInstance() throws Exception {
+    void createTicketSystemInstance() throws Exception {
         int databaseSizeBeforeCreate = ticketSystemInstanceRepository.findAll().size();
 
         // Create the TicketSystemInstance
@@ -132,7 +132,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void createTicketSystemInstanceWithExistingId() throws Exception {
+    void createTicketSystemInstanceWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = ticketSystemInstanceRepository.findAll().size();
 
         // Create the TicketSystemInstance with an existing ID
@@ -152,7 +152,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void checkTypeIsRequired() throws Exception {
+    void checkTypeIsRequired() throws Exception {
         int databaseSizeBeforeTest = ticketSystemInstanceRepository.findAll().size();
         // set the field null
         ticketSystemInstance.setType(null);
@@ -170,7 +170,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void checkUrlIsRequired() throws Exception {
+    void checkUrlIsRequired() throws Exception {
         int databaseSizeBeforeTest = ticketSystemInstanceRepository.findAll().size();
         // set the field null
         ticketSystemInstance.setUrl(null);
@@ -188,7 +188,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void getAllTicketSystemInstances() throws Exception {
+    void getAllTicketSystemInstances() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 
@@ -204,7 +204,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void getTicketSystemInstance() throws Exception {
+    void getTicketSystemInstance() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 
@@ -220,7 +220,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void getNonExistingTicketSystemInstance() throws Exception {
+    void getNonExistingTicketSystemInstance() throws Exception {
         // Get the ticketSystemInstance
         restTicketSystemInstanceMockMvc.perform(get("/api/ticket-system-instances/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
@@ -228,7 +228,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void updateTicketSystemInstance() throws Exception {
+    void updateTicketSystemInstance() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 
@@ -259,7 +259,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingTicketSystemInstance() throws Exception {
+    void updateNonExistingTicketSystemInstance() throws Exception {
         int databaseSizeBeforeUpdate = ticketSystemInstanceRepository.findAll().size();
 
         // Create the TicketSystemInstance
@@ -277,7 +277,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    public void deleteTicketSystemInstance() throws Exception {
+    void deleteTicketSystemInstance() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 

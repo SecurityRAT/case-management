@@ -1,10 +1,9 @@
 package org.securityrat.casemanagement.service;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+
+// todo add Ticket System Instance property
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class TemporaryTokenProperties {
 
@@ -17,7 +16,7 @@ public abstract class TemporaryTokenProperties {
     @Getter
     private String authorizationUrl;
 
-    protected TemporaryTokenProperties(String tmpToken, String authorizationUrl) {
+    protected TemporaryTokenProperties(@NonNull String tmpToken, @NonNull String authorizationUrl) {
         this.tmpToken = tmpToken;
         this.authorizationUrl = authorizationUrl;
 
@@ -25,6 +24,7 @@ public abstract class TemporaryTokenProperties {
 
     @Override
     public String toString(){
+        //todo: add ticket system instance id
         if (this.getTmpSecret() != null) {
             return String.format("%s,%s,%s", this.getTmpToken(), this.getTmpSecret(), this.getAuthorizationUrl());
         }

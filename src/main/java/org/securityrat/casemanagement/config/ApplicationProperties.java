@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Base64Utils;
 
 import javax.validation.constraints.NotBlank;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -54,8 +56,17 @@ public class ApplicationProperties {
         @Getter
         private String privateKey;
 
+        @Getter
+        @Setter
+        private Long validationPeriod;
+
         public void setPrivateKey(String privateKey) {
             this.privateKey = Base64Utils.encodeToString(privateKey.getBytes(StandardCharsets.UTF_8));
+        }
+
+        public void setCallback(String callback) throws URISyntaxException {
+            URI uri = new URI(callback);
+            this.callback = uri.toString();
         }
     }
 

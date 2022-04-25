@@ -1,6 +1,7 @@
 package org.securityrat.casemanagement.security;
 
 import org.junit.jupiter.api.Test;
+import org.securityrat.casemanagement.config.Constants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,10 +21,10 @@ import static org.springframework.security.oauth2.core.oidc.endpoint.OidcParamet
 /**
  * Test class for the {@link SecurityUtils} utility class.
  */
-public class SecurityUtilsUnitTest {
+class SecurityUtilsUnitTest {
 
     @Test
-    public void testGetCurrentUserLogin() {
+    void testGetCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("admin", "admin"));
         SecurityContextHolder.setContext(securityContext);
@@ -32,12 +33,12 @@ public class SecurityUtilsUnitTest {
     }
 
     @Test
-    public void testGetCurrentUserLoginForOAuth2() {
+    void testGetCurrentUserLoginForOAuth2() {
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         Map<String, Object> claims = new HashMap<>();
         claims.put("groups", "ROLE_USER");
         claims.put("sub", 123);
-        claims.put("preferred_username", "admin");
+        claims.put(Constants.PREFFEREDUSERPROPERTY, "admin");
         OidcIdToken idToken = new OidcIdToken(ID_TOKEN, Instant.now(),
             Instant.now().plusSeconds(60), claims);
         Collection<GrantedAuthority> authorities = new ArrayList<>();

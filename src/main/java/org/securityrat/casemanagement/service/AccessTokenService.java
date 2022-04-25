@@ -8,14 +8,15 @@ import org.securityrat.casemanagement.domain.TicketSystemInstance;
 import org.securityrat.casemanagement.domain.User;
 import org.securityrat.casemanagement.domain.enumeration.TicketSystem;
 import org.securityrat.casemanagement.repository.AccessTokenRepository;
-import org.securityrat.casemanagement.service.exceptions.TempTokenNotGeneratedException;
+import org.securityrat.casemanagement.repository.UserRepository;
+import org.securityrat.casemanagement.security.SecurityUtils;
 import org.securityrat.casemanagement.service.interfaces.OAuthClient;
 import org.securityrat.casemanagement.service.ticketsystems.jiraserver.JiraOAuthClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -24,54 +25,99 @@ public class AccessTokenService {
     private final ApplicationProperties applicationProperties;
 
     private final AccessTokenRepository accessTokenRepository;
+
+    private final TokenEncryptorService tokenEncryptorService;
+
+    private final UserService userService;
     private OAuthClient oauthClient;
 
-    public AccessTokenService(ApplicationProperties applicationProperties, AccessTokenRepository accessTokenRepository) {
+    public AccessTokenService(ApplicationProperties applicationProperties, AccessTokenRepository accessTokenRepository,
+                              TokenEncryptorService tokenEncryptorService, UserService userService) {
+        this.tokenEncryptorService = tokenEncryptorService;
         this.accessTokenRepository = accessTokenRepository;
         this.applicationProperties = applicationProperties;
+        this.userService = userService;
     }
 
     public void setOAuthClient(TicketSystemInstance ticketSystemInstance) {
-        this.oauthClient = getOauthClient(this.applicationProperties.getTicketSystem().getType(), ticketSystemInstance);
+        this.oauthClient = getOauthClient(ticketSystemInstance.getType().toString(), ticketSystemInstance);
     }
 
-    public TemporaryTokenProperties createTempToken() {
+    public Optional<TemporaryTokenProperties> createTempToken() {
 
-        try {
-            return this.oauthClient.getAndAuthorizeTemporaryToken();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new TempTokenNotGeneratedException("The private key of the ticket system is invalid.", e);
-        } catch (IOException e) {
-            throw new TempTokenNotGeneratedException("Possibly a GeneralSecurityIssue", e);
+        return Optional.of(this.oauthClient.getAndAuthorizeTemporaryToken());
+    }
+
+    @Transactional
+    public boolean createAccessToken(TicketSystemInstance ticketSystemInstance, String tempToken, String authorizationCode) {
+        String retrievedAccessToken = this.oauthClient.getAccessToken(tempToken, authorizationCode);
+        if (retrievedAccessToken != null) {
+            Optional<User> user = this.userService.getUserWithAuthorities();
+            if (user.isPresent()) {
+                Set<AccessToken> accessTokens = this.accessTokenRepository.findAccessTokenByTicketSystemInstanceAndUser(ticketSystemInstance, user.get());
+                for (AccessToken accessToken : accessTokens) {
+                    this.accessTokenRepository.delete(accessToken);
+                }
+
+                return this.storeAccessToken(user.get(), ticketSystemInstance, retrievedAccessToken);
+            }
+            log.info("Invalid user");
         }
+        log.debug("Access Token was not retrieved from ticket system");
+        return false;
     }
 
-    public boolean updateTempTokenWithAccessToken(User user, String accessToken) {
-        return false;
+
+    private boolean storeAccessToken(User user, TicketSystemInstance ticketSystemInstance, String createdAccessToken) {
+        AccessToken accessToken = new AccessToken();
+        byte[] decryptedToken = this.tokenEncryptorService.encrypt(createdAccessToken);
+        accessToken.setToken(new String(decryptedToken));
+        accessToken.setUser(user);
+        accessToken.setTicketInstance(ticketSystemInstance);
+        accessToken.setSalt(this.tokenEncryptorService.generateSalt());
+        accessToken.setExpirationDate(this.oauthClient.getDefaultExpirationDate());
+        this.accessTokenRepository.save(accessToken);
+        log.info("Access token to ticket system with id {} and for user {} was created.", user.getId(), ticketSystemInstance.getId());
+        return true;
     }
 
     /**
      * Returns the access token of a given the user for the ticket system if it exists and null otherwise
      *
-     * @param user the given user
+     * @param ticketSystemInstance the ticket system instance
      * @return the access token or null if it doesn't exist
      */
-    public AccessToken getExistingAccessToken(User user) {
-
-        return null;
+    @Transactional(readOnly = true)
+    public Optional<String> getExistingAccessToken(TicketSystemInstance ticketSystemInstance) {
+        Optional<User> user = this.userService.getUserWithAuthorities();
+        return user.flatMap(value -> this.accessTokenRepository.findAccessTokenByTicketSystemInstanceAndUser(ticketSystemInstance, value)
+            .stream()
+            .findFirst()
+            .map(encryptedAccessToken -> {
+                byte[] decryptedToken = this.tokenEncryptorService.decrypt(encryptedAccessToken.getToken(), encryptedAccessToken.getSalt());
+                return new String(decryptedToken);
+            }));
     }
 
-    public boolean deleteAccessTokenEntry(User user) {
-        return false;
+    @Transactional
+    public void deleteAccessTokenEntry(Long id) {
+        this.accessTokenRepository.findById(id).ifPresent(this.accessTokenRepository::delete);
+    }
+
+    public String getCallbackUrl() {
+        return this.oauthClient.getCallbackUrl();
     }
 
     private OAuthClient getOauthClient(String ticketSystemType, TicketSystemInstance ticketSystemInstance) {
-        OAuthClient defaultClient = new JiraOAuthClient(ticketSystemInstance);
-
-        if (TicketSystem.JIRACLOUD.equals(TicketSystem.valueOf(ticketSystemType))) {
-            defaultClient = null;
+        TicketSystem defaultTicketSystemType = TicketSystem.valueOf(this.applicationProperties.getTicketSystem().getType());
+        if (ticketSystemType != null) {
+            defaultTicketSystemType = TicketSystem.valueOf(ticketSystemType);
         }
 
-        return defaultClient;
+        if (TicketSystem.JIRASERVER.equals(defaultTicketSystemType)) {
+            return new JiraOAuthClient(ticketSystemInstance);
+        }
+
+        return null;
     }
 }

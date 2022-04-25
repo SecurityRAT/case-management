@@ -4,7 +4,7 @@ import org.securityrat.casemanagement.service.interfaces.RequirementImporterExpo
 
 public class JiraServerImporterExporter implements RequirementImporterExporter {
     @Override
-    public boolean hasAuthenticationTokens() {
+    public boolean hasAuthenticationToken() {
         return false;
     }
 

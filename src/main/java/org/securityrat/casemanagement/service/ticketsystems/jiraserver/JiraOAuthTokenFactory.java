@@ -3,13 +3,10 @@ package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import org.securityrat.casemanagement.config.Constants;
-import org.springframework.util.Base64Utils;
+import org.securityrat.casemanagement.security.SecurityUtils;
 
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 
 public class JiraOAuthTokenFactory {
     protected final String accessTokenUrl;
@@ -73,24 +70,9 @@ public class JiraOAuthTokenFactory {
      */
     private OAuthRsaSigner getOAuthRsaSigner(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
         OAuthRsaSigner oAuthRsaSigner = new OAuthRsaSigner();
-        oAuthRsaSigner.privateKey = getPrivateKey(privateKey);
+        oAuthRsaSigner.privateKey = SecurityUtils.getPrivateKey(privateKey);
         return oAuthRsaSigner;
     }
 
-    // todo: movee this to a configuration
-    /**
-     * Creates PrivateKey from string
-     *
-     * @param privateKey private key in PKCS8 format
-     * @return private key
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
-     */
-    private PrivateKey getPrivateKey(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] privateBytes = Base64Utils.decodeFromString(privateKey);
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        return kf.generatePrivate(keySpec);
-    }
 }
 
