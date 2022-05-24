@@ -36,6 +36,10 @@ public class TicketSystemInstance implements Serializable {
     @Column(name = "url", nullable = false)
     private String url;
 
+    @Column(name = "consumer_key")
+    @JsonIgnore
+    private String consumerKey;
+
     @OneToMany(mappedBy = "ticketInstance")
     @JsonIgnore
     private Set<AccessToken> accessTokens = new HashSet<>();
@@ -88,6 +92,19 @@ public class TicketSystemInstance implements Serializable {
         this.url = url;
     }
 
+    public String getConsumerKey() {
+        return consumerKey;
+    }
+
+    public TicketSystemInstance consumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+        return this;
+    }
+
+    public void setConsumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+    }
+
     public Set<AccessToken> getAccessTokens() {
         return accessTokens;
     }
@@ -137,6 +154,7 @@ public class TicketSystemInstance implements Serializable {
             ", name='" + getName() + "'" +
             ", type='" + getType() + "'" +
             ", url='" + getUrl() + "'" +
+            ", consumerKey='" + getConsumerKey() + "'" +
             "}";
     }
 }

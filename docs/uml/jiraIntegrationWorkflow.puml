@@ -38,7 +38,7 @@ end
 alt Access token doesn't exist in DB or token invalid
     caseManagement -> Jira: Get request token
     Jira --> caseManagement: request token & secret
-    caseManagement --> user: Temporary Jira authorization URL with request token as Cookie (+ callback URL and request)
+    caseManagement --> user: Temporary Jira authorization URL with request token
     user -> user: Open temporary JIRA authorization URL in new Tab to give authorization
     user -> Jira: User authorizes token
     Jira --> user: Redirect to callback URL with access_code
@@ -50,8 +50,7 @@ alt Access token doesn't exist in DB or token invalid
     activate caseManagementDB
     caseManagementDB --> caseManagement:
     deactivate caseManagementDB
-    caseManagement -> caseManagement: Delete cookie
-    caseManagement --> user: Authorization complete (+ deleted Cookie)
+    caseManagement --> user: Authorization complete
     user -> caseManagement: Export artifact requirements
 end
 

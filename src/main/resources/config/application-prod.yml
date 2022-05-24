@@ -147,12 +147,12 @@ jhipster:
 # ===================================================================
 
 application:
-  ticketsystem:
+  ticket-system:
     type: JIRASERVER # JIRACLOUD
   jira-server:
     private-key: # private key in pkcs8 format
-    consumer-key:
+    validation-period: 1800 # number in days
     callback:
   security:
     aes:
-      secret:
+      secret-key: mylongsecret

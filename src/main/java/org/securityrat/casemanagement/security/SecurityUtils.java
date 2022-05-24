@@ -1,6 +1,7 @@
 package org.securityrat.casemanagement.security;
 
 import org.securityrat.casemanagement.config.Constants;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,6 +50,18 @@ public final class SecurityUtils {
                     }
                 } else if (authentication.getPrincipal() instanceof String) {
                     return (String) authentication.getPrincipal();
+                }
+                return null;
+            });
+    }
+
+    public static Optional<AbstractAuthenticationToken> getCurrentUserAuthToken()  {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(securityContext.getAuthentication())
+            .map(authentication -> {
+
+                if (authentication instanceof JwtAuthenticationToken) {
+                    return (JwtAuthenticationToken) authentication;
                 }
                 return null;
             });

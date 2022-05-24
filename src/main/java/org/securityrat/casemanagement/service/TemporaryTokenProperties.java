@@ -8,7 +8,7 @@ import lombok.*;
 public abstract class TemporaryTokenProperties {
 
     @Getter
-    private String tmpToken;
+    private String tempToken;
 
     @Getter
     private String tmpSecret;
@@ -16,18 +16,20 @@ public abstract class TemporaryTokenProperties {
     @Getter
     private String authorizationUrl;
 
-    protected TemporaryTokenProperties(@NonNull String tmpToken, @NonNull String authorizationUrl) {
-        this.tmpToken = tmpToken;
-        this.authorizationUrl = authorizationUrl;
+    @Getter
+    private String verificationCode;
 
+    protected TemporaryTokenProperties(@NonNull String authorizationUrl) {
+        this.authorizationUrl = authorizationUrl;
+    }
+    protected TemporaryTokenProperties(@NonNull String tempToken, @NonNull String verificationCode) {
+        this.tempToken = tempToken;
+        this.verificationCode = verificationCode;
     }
 
     @Override
     public String toString(){
-        //todo: add ticket system instance id
-        if (this.getTmpSecret() != null) {
-            return String.format("%s,%s,%s", this.getTmpToken(), this.getTmpSecret(), this.getAuthorizationUrl());
-        }
-        return String.format("%s,%s,%s", this.getTmpToken(), "", this.getAuthorizationUrl());
+        //todo: rework this toString method
+        return String.format("%s,%s,%s", this.getTempToken(), "", this.getAuthorizationUrl());
     }
 }

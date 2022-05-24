@@ -44,6 +44,9 @@ public class TicketSystemInstanceResourceIT {
     private static final String DEFAULT_URL = "AAAAAAAAAA";
     private static final String UPDATED_URL = "BBBBBBBBBB";
 
+    private static final String DEFAULT_CONSUMER_KEY = "AAAAAAAAAA";
+    private static final String UPDATED_CONSUMER_KEY = "BBBBBBBBBB";
+
     @Autowired
     private TicketSystemInstanceRepository ticketSystemInstanceRepository;
 
@@ -88,7 +91,8 @@ public class TicketSystemInstanceResourceIT {
         TicketSystemInstance ticketSystemInstance = new TicketSystemInstance()
             .name(DEFAULT_NAME)
             .type(DEFAULT_TYPE)
-            .url(DEFAULT_URL);
+            .url(DEFAULT_URL)
+            .consumerKey(DEFAULT_CONSUMER_KEY);
         return ticketSystemInstance;
     }
     /**
@@ -101,7 +105,8 @@ public class TicketSystemInstanceResourceIT {
         TicketSystemInstance ticketSystemInstance = new TicketSystemInstance()
             .name(UPDATED_NAME)
             .type(UPDATED_TYPE)
-            .url(UPDATED_URL);
+            .url(UPDATED_URL)
+            .consumerKey(UPDATED_CONSUMER_KEY);
         return ticketSystemInstance;
     }
 
@@ -112,7 +117,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    void createTicketSystemInstance() throws Exception {
+    public void createTicketSystemInstance() throws Exception {
         int databaseSizeBeforeCreate = ticketSystemInstanceRepository.findAll().size();
 
         // Create the TicketSystemInstance
@@ -128,11 +133,12 @@ public class TicketSystemInstanceResourceIT {
         assertThat(testTicketSystemInstance.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testTicketSystemInstance.getType()).isEqualTo(DEFAULT_TYPE);
         assertThat(testTicketSystemInstance.getUrl()).isEqualTo(DEFAULT_URL);
+        assertThat(testTicketSystemInstance.getConsumerKey()).isEqualTo(DEFAULT_CONSUMER_KEY);
     }
 
     @Test
     @Transactional
-    void createTicketSystemInstanceWithExistingId() throws Exception {
+    public void createTicketSystemInstanceWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = ticketSystemInstanceRepository.findAll().size();
 
         // Create the TicketSystemInstance with an existing ID
@@ -152,7 +158,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    void checkTypeIsRequired() throws Exception {
+    public void checkTypeIsRequired() throws Exception {
         int databaseSizeBeforeTest = ticketSystemInstanceRepository.findAll().size();
         // set the field null
         ticketSystemInstance.setType(null);
@@ -170,7 +176,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    void checkUrlIsRequired() throws Exception {
+    public void checkUrlIsRequired() throws Exception {
         int databaseSizeBeforeTest = ticketSystemInstanceRepository.findAll().size();
         // set the field null
         ticketSystemInstance.setUrl(null);
@@ -188,7 +194,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    void getAllTicketSystemInstances() throws Exception {
+    public void getAllTicketSystemInstances() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 
@@ -199,12 +205,13 @@ public class TicketSystemInstanceResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(ticketSystemInstance.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL)));
+            .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL)))
+            .andExpect(jsonPath("$.[*].consumerKey").value(hasItem(DEFAULT_CONSUMER_KEY)));
     }
 
     @Test
     @Transactional
-    void getTicketSystemInstance() throws Exception {
+    public void getTicketSystemInstance() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 
@@ -215,12 +222,13 @@ public class TicketSystemInstanceResourceIT {
             .andExpect(jsonPath("$.id").value(ticketSystemInstance.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
-            .andExpect(jsonPath("$.url").value(DEFAULT_URL));
+            .andExpect(jsonPath("$.url").value(DEFAULT_URL))
+            .andExpect(jsonPath("$.consumerKey").value(DEFAULT_CONSUMER_KEY));
     }
 
     @Test
     @Transactional
-    void getNonExistingTicketSystemInstance() throws Exception {
+    public void getNonExistingTicketSystemInstance() throws Exception {
         // Get the ticketSystemInstance
         restTicketSystemInstanceMockMvc.perform(get("/api/ticket-system-instances/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
@@ -228,7 +236,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    void updateTicketSystemInstance() throws Exception {
+    public void updateTicketSystemInstance() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 
@@ -241,7 +249,8 @@ public class TicketSystemInstanceResourceIT {
         updatedTicketSystemInstance
             .name(UPDATED_NAME)
             .type(UPDATED_TYPE)
-            .url(UPDATED_URL);
+            .url(UPDATED_URL)
+            .consumerKey(UPDATED_CONSUMER_KEY);
 
         restTicketSystemInstanceMockMvc.perform(put("/api/ticket-system-instances")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -255,11 +264,12 @@ public class TicketSystemInstanceResourceIT {
         assertThat(testTicketSystemInstance.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testTicketSystemInstance.getType()).isEqualTo(UPDATED_TYPE);
         assertThat(testTicketSystemInstance.getUrl()).isEqualTo(UPDATED_URL);
+        assertThat(testTicketSystemInstance.getConsumerKey()).isEqualTo(UPDATED_CONSUMER_KEY);
     }
 
     @Test
     @Transactional
-    void updateNonExistingTicketSystemInstance() throws Exception {
+    public void updateNonExistingTicketSystemInstance() throws Exception {
         int databaseSizeBeforeUpdate = ticketSystemInstanceRepository.findAll().size();
 
         // Create the TicketSystemInstance
@@ -277,7 +287,7 @@ public class TicketSystemInstanceResourceIT {
 
     @Test
     @Transactional
-    void deleteTicketSystemInstance() throws Exception {
+    public void deleteTicketSystemInstance() throws Exception {
         // Initialize the database
         ticketSystemInstanceRepository.saveAndFlush(ticketSystemInstance);
 

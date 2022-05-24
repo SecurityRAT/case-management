@@ -17,9 +17,9 @@ import java.util.Set;
 @SuppressWarnings("unused")
 @Repository
 public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> {
-    @Query("SELECT distinct accessToken FROM AccessToken " +
-        "WHERE accessToken.ticketInstance = :ticketSystemInstance" +
-        "AND accessToken.user = :user")
+    @Query("SELECT distinct at FROM AccessToken at " +
+        "WHERE at.ticketInstance = :ticketSystemInstance " +
+        "AND at.user = :user")
     Set<AccessToken> findAccessTokenByTicketSystemInstanceAndUser(
         @Param("ticketSystemInstance") TicketSystemInstance ticketSystemInstance,
         @Param("user") User user);

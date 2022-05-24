@@ -179,7 +179,7 @@ public class UserService {
      * @param authToken the authentication token.
      * @return the appUser from the authentication.
      */
-    public UserDTO getUserFromAuthentication(AbstractAuthenticationToken authToken) {
+    public User getUserFromAuthdentication(AbstractAuthenticationToken authToken) {
         Map<String, Object> attributes;
         if (authToken instanceof OAuth2AuthenticationToken) {
             attributes = ((OAuth2AuthenticationToken) authToken).getPrincipal().getAttributes();
@@ -197,7 +197,11 @@ public class UserService {
                 return auth;
             })
             .collect(Collectors.toSet()));
-        return new UserDTO(syncUserWithIdP(attributes, appUser));
+        return syncUserWithIdP(attributes, appUser);
+    }
+
+    public UserDTO getUserDTOFromAuthentication(AbstractAuthenticationToken authToken) {
+        return new UserDTO(getUserFromAuthdentication(authToken));
     }
 
     private static User getUser(Map<String, Object> details) {

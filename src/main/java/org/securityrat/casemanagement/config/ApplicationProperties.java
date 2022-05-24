@@ -4,12 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.Base64Utils;
 
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Properties specific to Case Management.
@@ -46,27 +44,23 @@ public class ApplicationProperties {
     public static class JiraServer {
 
         @Getter
-        @Setter
-        private String consumerKey;
-
-        @Getter
-        @Setter
         private String callback;
 
         @Getter
+        @Setter
         private String privateKey;
 
         @Getter
         @Setter
         private Long validationPeriod;
 
-        public void setPrivateKey(String privateKey) {
-            this.privateKey = Base64Utils.encodeToString(privateKey.getBytes(StandardCharsets.UTF_8));
-        }
-
         public void setCallback(String callback) throws URISyntaxException {
-            URI uri = new URI(callback);
-            this.callback = uri.toString();
+            if (!callback.equals("oob")) {
+                URI uri = new URI(callback);
+                this.callback = uri.toString();
+            } else {
+                this.callback = "oob";
+            }
         }
     }
 

@@ -19,6 +19,10 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "consumerKey",
+            "fieldType": "String"
         }
     ],
     "relationships": [

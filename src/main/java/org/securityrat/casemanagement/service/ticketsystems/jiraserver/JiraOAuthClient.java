@@ -4,8 +4,10 @@ import com.google.api.client.auth.oauth.OAuthAuthorizeTemporaryTokenUrl;
 import com.google.api.client.auth.oauth.OAuthCredentialsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.securityrat.casemanagement.config.ApplicationProperties;
+import org.securityrat.casemanagement.config.Constants;
 import org.securityrat.casemanagement.domain.TicketSystemInstance;
 import org.securityrat.casemanagement.service.TemporaryTokenProperties;
+import org.securityrat.casemanagement.service.Utils;
 import org.securityrat.casemanagement.service.exceptions.TokenNotGeneratedException;
 import org.securityrat.casemanagement.service.interfaces.OAuthClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +23,17 @@ public class JiraOAuthClient implements OAuthClient {
 
     private final JiraOAuthTokenFactory oAuthGetAccessTokenFactory;
     private final String authorizationUrl;
+
+    private final String consumerKey;
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public JiraOAuthClient(TicketSystemInstance ticketSystemInstance) {
-        String jiraBaseUrl = ticketSystemInstance.getUrl();
+    public JiraOAuthClient(TicketSystemInstance ticketSystemInstance, ApplicationProperties applicationProperties) {
+        String jiraBaseUrl = Utils.removeTrailingSlashInUrl(ticketSystemInstance.getUrl());
         this.oAuthGetAccessTokenFactory = new JiraOAuthTokenFactory(jiraBaseUrl);
-        this.authorizationUrl = String.format("%s%s", jiraBaseUrl, "/plugins/servlet/oauth/authorize");
+        consumerKey = ticketSystemInstance.getConsumerKey();
+        this.authorizationUrl = String.format("%s%s", jiraBaseUrl, Constants.JIRASERVERAUTHORIZEPATH);
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -40,16 +46,15 @@ public class JiraOAuthClient implements OAuthClient {
     // todo: Add exception if invalid ticket system instance
     public TemporaryTokenProperties getAndAuthorizeTemporaryToken() {
         try {
-
             JiraOAuthGetTemporaryToken temporaryToken = oAuthGetAccessTokenFactory.getTemporaryToken(
-                this.applicationProperties.getJiraServer().getConsumerKey(), this.applicationProperties.getJiraServer().getPrivateKey(),
+                consumerKey, this.applicationProperties.getJiraServer().getPrivateKey(),
                 this.applicationProperties.getJiraServer().getCallback());
             OAuthCredentialsResponse response = temporaryToken.execute();
 
             OAuthAuthorizeTemporaryTokenUrl authorizationURL = new OAuthAuthorizeTemporaryTokenUrl(authorizationUrl);
             authorizationURL.temporaryToken = response.token;
 
-            return new JiraTemporaryTokenProperties(response.token, response.tokenSecret, authorizationURL.toString());
+            return new JiraTemporaryTokenProperties(authorizationURL.toString());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new TokenNotGeneratedException("The private key of the ticket system is invalid.", e);
         } catch (IOException e) {
@@ -70,7 +75,7 @@ public class JiraOAuthClient implements OAuthClient {
     public String getAccessToken(String tmpToken, String authorizationCode) {
         try {
             JiraOAuthGetAccessToken oAuthAccessToken = oAuthGetAccessTokenFactory.getJiraOAuthGetAccessToken(
-                tmpToken, authorizationCode, this.applicationProperties.getJiraServer().getConsumerKey(), this.applicationProperties.getJiraServer().getPrivateKey());
+                tmpToken, authorizationCode, consumerKey, this.applicationProperties.getJiraServer().getPrivateKey());
             OAuthCredentialsResponse response = oAuthAccessToken.execute();
 
             return response.token;

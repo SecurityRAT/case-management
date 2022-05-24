@@ -1,15 +1,14 @@
 package org.securityrat.casemanagement.web.rest;
 
-import com.google.common.net.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
+import org.securityrat.casemanagement.config.Constants;
 import org.securityrat.casemanagement.domain.TicketSystemInstance;
 import org.securityrat.casemanagement.repository.TicketSystemInstanceRepository;
 import org.securityrat.casemanagement.service.AccessTokenService;
 import org.securityrat.casemanagement.service.TemporaryTokenProperties;
 import org.securityrat.casemanagement.service.dto.TemporaryOAuthTokenDTO;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.securityrat.casemanagement.service.interfaces.OAuthClient;
+import org.springframework.http.*;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/ticket-system-instance/oauth")
 @Slf4j
 public class TicketSystemAuthenticationResource {
 
@@ -32,7 +31,7 @@ public class TicketSystemAuthenticationResource {
         this.ticketSystemInstanceRepository = ticketSystemInstanceRepository;
     }
 
-    @GetMapping("/ticket-system-instance/{id}/request-token/")
+    @GetMapping("/{id}/request-token/")
     public ResponseEntity<TemporaryOAuthTokenDTO> getAuthorizationUrl(@PathVariable Long id) {
 
         log.debug("REST request to create a request-token for the ticket system {}", id);
@@ -40,16 +39,11 @@ public class TicketSystemAuthenticationResource {
         if (ticketSystemInstance.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        this.accessTokenService.setOAuthClient(ticketSystemInstance.get());
-        Optional<TemporaryTokenProperties> requestToken = this.accessTokenService.createTempToken();
+        OAuthClient oAuthClient = this.accessTokenService.createOAuthClient(ticketSystemInstance.get());
+        Optional<TemporaryTokenProperties> requestToken = this.accessTokenService.createTempToken(oAuthClient);
         return requestToken.map(reqToken -> {
-            TemporaryOAuthTokenDTO response = new TemporaryOAuthTokenDTO(reqToken.getAuthorizationUrl());
-            try {
-                return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, createRequestTokenCookie(reqToken.toString()).toString()).body(response);
-            } catch (URISyntaxException e) {
-                log.warn("callback URL not parseable");
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            TemporaryOAuthTokenDTO responseBody = new TemporaryOAuthTokenDTO(reqToken.getAuthorizationUrl());
+            return ResponseEntity.ok().body(responseBody);
         }).orElseThrow(() -> {
             log.warn("Request token could not created for ticket system {}", id);
             return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -57,13 +51,24 @@ public class TicketSystemAuthenticationResource {
 
     }
 
-    private ResponseCookie createRequestTokenCookie(String cookieValue) throws URISyntaxException {
-        URI url = new URI(this.accessTokenService.getCallbackUrl());
-        return ResponseCookie.from("secrat-ticketsystem", Base64Utils.encodeToString(cookieValue.getBytes(StandardCharsets.UTF_8)))
-            .httpOnly(true)
-            .path(url.getPath())
-            .maxAge(600)
-            .sameSite("Strict")
-            .build();
+    @GetMapping("/access-token")
+    public ResponseEntity<String> createAccessTokenWithCallback(@RequestHeader("referer") String referrer, @RequestParam(name = "oauth_token") String requestToken, @RequestParam(name = "oauth_verifier") String verificationCode) {
+        try {
+            URI url = new URI(referrer);
+            String ticketInstanceUrl = url.toString().split(Constants.JIRASERVERAUTHORIZEPATH)[0];
+            Optional<TicketSystemInstance> ticketSystemInstance = this.ticketSystemInstanceRepository.findTicketSystemInstanceByUrl(ticketInstanceUrl);
+            if (ticketSystemInstance.isEmpty()) {
+                return ResponseEntity.badRequest().body("Invalid ticket system URL provided in referer");
+            }
+            OAuthClient oAuthClient = this.accessTokenService.createOAuthClient(ticketSystemInstance.get());
+            boolean accessTokenCreated = this.accessTokenService.createAccessToken(oAuthClient, ticketSystemInstance.get(), requestToken, verificationCode);
+            if (accessTokenCreated) {
+                return ResponseEntity.status(HttpStatus.CREATED).body("Access token created");
+            }
+
+        } catch(URISyntaxException e) {
+            return ResponseEntity.badRequest().body("Invalid ticket system URL provided in referer");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Access token was not created");
     }
 }
