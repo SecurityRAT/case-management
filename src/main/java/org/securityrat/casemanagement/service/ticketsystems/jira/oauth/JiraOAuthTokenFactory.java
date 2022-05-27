@@ -1,4 +1,4 @@
-package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
+package org.securityrat.casemanagement.service.ticketsystems.jira.oauth;
 
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;

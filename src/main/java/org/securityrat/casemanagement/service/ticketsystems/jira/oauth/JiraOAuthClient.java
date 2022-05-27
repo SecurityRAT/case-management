@@ -1,4 +1,4 @@
-package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
+package org.securityrat.casemanagement.service.ticketsystems.jira.oauth;
 
 import com.google.api.client.auth.oauth.OAuthAuthorizeTemporaryTokenUrl;
 import com.google.api.client.auth.oauth.OAuthCredentialsResponse;
@@ -47,8 +47,8 @@ public class JiraOAuthClient implements OAuthClient {
     public TemporaryTokenProperties getAndAuthorizeTemporaryToken() {
         try {
             JiraOAuthGetTemporaryToken temporaryToken = oAuthGetAccessTokenFactory.getTemporaryToken(
-                consumerKey, this.applicationProperties.getJiraServer().getPrivateKey(),
-                this.applicationProperties.getJiraServer().getCallback());
+                consumerKey, this.applicationProperties.getJira().getPrivateKey(),
+                this.applicationProperties.getJira().getCallbackUrl());
             OAuthCredentialsResponse response = temporaryToken.execute();
 
             OAuthAuthorizeTemporaryTokenUrl authorizationURL = new OAuthAuthorizeTemporaryTokenUrl(authorizationUrl);
@@ -75,7 +75,7 @@ public class JiraOAuthClient implements OAuthClient {
     public String getAccessToken(String tmpToken, String authorizationCode) {
         try {
             JiraOAuthGetAccessToken oAuthAccessToken = oAuthGetAccessTokenFactory.getJiraOAuthGetAccessToken(
-                tmpToken, authorizationCode, consumerKey, this.applicationProperties.getJiraServer().getPrivateKey());
+                tmpToken, authorizationCode, consumerKey, this.applicationProperties.getJira().getPrivateKey());
             OAuthCredentialsResponse response = oAuthAccessToken.execute();
 
             return response.token;
@@ -88,13 +88,13 @@ public class JiraOAuthClient implements OAuthClient {
 
     @Override
     public ZonedDateTime getDefaultExpirationDate() {
-        Long validationPeriodInDays = this.applicationProperties.getJiraServer().getValidationPeriod();
+        Long validationPeriodInDays = this.applicationProperties.getJira().getValidationPeriod();
         return ZonedDateTime.now().plusDays(validationPeriodInDays);
     }
 
     @Override
     public String getCallbackUrl() {
-        return this.applicationProperties.getJiraServer().getCallback();
+        return this.applicationProperties.getJira().getCallbackUrl();
     }
 
 

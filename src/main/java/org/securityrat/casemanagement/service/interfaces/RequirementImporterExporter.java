@@ -3,13 +3,6 @@ package org.securityrat.casemanagement.service.interfaces;
 // todo Review all methods and check whether all parameters and return types are correct
 public interface RequirementImporterExporter {
 
-
-    boolean hasAuthenticationToken();
-
-    void authenticateUser();
-
-    boolean isTicketInstanceValid();
-
     // todo: Change the return Type once DTO is available
     void exportRequirementSet(String requirementSet);
 

@@ -106,7 +106,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     AesEncryptionProperties generateAesEncryptionProperties() {
-        String secretKey = applicationProperties.getSecurity().getAes().getSecretKey();
+        String secretKey = applicationProperties.getSecurity().getAes().getSecret();
         return new AesEncryptionProperties(secretKey, KeyGenerators.string().generateKey());
     }
 }

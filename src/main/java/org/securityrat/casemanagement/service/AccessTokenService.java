@@ -10,7 +10,7 @@ import org.securityrat.casemanagement.domain.enumeration.TicketSystem;
 import org.securityrat.casemanagement.repository.AccessTokenRepository;
 import org.securityrat.casemanagement.security.SecurityUtils;
 import org.securityrat.casemanagement.service.interfaces.OAuthClient;
-import org.securityrat.casemanagement.service.ticketsystems.jiraserver.JiraOAuthClient;
+import org.securityrat.casemanagement.service.ticketsystems.jira.oauth.JiraOAuthClient;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,8 +67,11 @@ public class AccessTokenService {
             }
             log.debug("Access token was created for user {} and for ticket system instance {}", currentUser.getId(), ticketSystemInstance.getId());
             Set<AccessToken> accessTokens = this.accessTokenRepository.findAccessTokenByTicketSystemInstanceAndUser(ticketSystemInstance, currentUser);
-            for (AccessToken accessToken : accessTokens) {
-                this.accessTokenRepository.delete(accessToken);
+            if (!accessTokens.isEmpty()) {
+                for (AccessToken accessToken : accessTokens) {
+                    this.accessTokenRepository.delete(accessToken);
+                }
+                log.info("Removed {} existing accessTokens for user {} to ticket system {}", accessTokens.size(), currentUser.getId(), ticketSystemInstance.getId());
             }
             return this.storeAccessToken(oauthClient, currentUser, ticketSystemInstance, retrievedAccessToken);
 

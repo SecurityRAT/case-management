@@ -1,4 +1,4 @@
-package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
+package org.securityrat.casemanagement.service.ticketsystems.jira.oauth;
 
 import org.securityrat.casemanagement.service.TemporaryTokenProperties;
 

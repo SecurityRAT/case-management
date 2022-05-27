@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Properties specific to Case Management.
@@ -26,7 +27,7 @@ public class ApplicationProperties {
     private final ApplicationProperties.TicketSystem ticketSystem = new ApplicationProperties.TicketSystem();
 
     @Getter
-    private final ApplicationProperties.JiraServer jiraServer = new JiraServer();
+    private final Jira jira = new Jira();
 
 
     public static class TicketSystem {
@@ -41,28 +42,66 @@ public class ApplicationProperties {
     }
 
     @NoArgsConstructor
-    public static class JiraServer {
+    public static class Jira {
 
         @Getter
-        private String callback;
+        private final ApplicationProperties.Jira.Oauth oauth = new ApplicationProperties.Jira.Oauth();
 
-        @Getter
-        @Setter
-        private String privateKey;
+        @NoArgsConstructor
+        public static class Oauth {
+            @Getter
+            private String callbackUrl;
 
-        @Getter
-        @Setter
-        private Long validationPeriod;
+            @Getter
+            @Setter
+            private String privateKey;
 
-        public void setCallback(String callback) throws URISyntaxException {
-            if (!callback.equals("oob")) {
-                URI uri = new URI(callback);
-                this.callback = uri.toString();
-            } else {
-                this.callback = "oob";
+            @Getter
+            @Setter
+            private Long validationPeriod;
+
+            public void setCallbackUrl(String callbackUrl) throws URISyntaxException {
+                if (!callbackUrl.equals("oob")) {
+                    URI uri = new URI(callbackUrl);
+                    this.callbackUrl = uri.toString();
+                } else {
+                    this.callbackUrl = "oob";
+                }
+            }
+        }
+        @NoArgsConstructor
+        public static class Oauth2 {
+            @Getter
+            private String callbackUrl;
+
+            @Getter
+            @Setter
+            private String clientId;
+
+            @Getter
+            @Setter
+            private String clientSecret;
+
+            @Getter
+            @Setter
+            private String prompt;
+
+            @Getter
+            @Setter
+            private String audience;
+
+            @Getter
+            @Setter
+            private List<String> scopes;
+
+            public void setCallbackUrl(String callbackUrl) throws URISyntaxException {
+                URI uri = new URI(callbackUrl);
+                this.callbackUrl = uri.toString();
             }
         }
     }
+
+
 
     @NoArgsConstructor
     public static class Security {
@@ -74,7 +113,7 @@ public class ApplicationProperties {
             @Getter
             @Setter
             @NotBlank
-            private String secretKey;
+            private String secret;
         }
     }
 

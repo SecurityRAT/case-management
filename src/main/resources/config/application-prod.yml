@@ -149,10 +149,25 @@ jhipster:
 application:
   ticket-system:
     type: JIRASERVER # JIRACLOUD
-  jira-server:
-    private-key: # private key in pkcs8 format
-    validation-period: 1800 # number in days
-    callback:
+  jira:
+    oauth:
+      # private key in pkcs8 format
+      private-key:
+      # validity of the access-token. Jira stores them for 5 years. https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/#step-4--make-an-authenticated-request-to-the-jira-rest-api
+      validation-period: 1800
+      callback-url:
+    oauth2:
+      callback-url:
+      client-id:
+      client-secret:
+      # For jira server / data-center: [read, write] https://confluence.atlassian.com/adminjiraserver/jira-oauth-2-0-provider-api-1115659070.html#JiraOAuth2.0providerAPI-scopes
+      # For jira cloud: ["read:jira-work", "write:jira-work"]  https://developer.atlassian.com/cloud/jira/platform/scopes-for-oauth-2-3LO-and-forge-apps/#classic-scopes:
+      scopes: ["read", "write"]
+      # Leave EMPTY for Jira server / data center. For Jira cloud, use the values commented https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/#1--direct-the-user-to-the-authorization-url-to-get-an-authorization-code
+      prompt: # api.atlassian.com
+      audience: # consent
+
+
   security:
     aes:
-      secret-key: mylongsecret
+      secret: mylongsecret

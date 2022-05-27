@@ -1,4 +1,4 @@
-package org.securityrat.casemanagement.service.ticketsystems.jiraserver;
+package org.securityrat.casemanagement.service.ticketsystems.jira.oauth;
 
 import com.google.api.client.auth.oauth.OAuthGetAccessToken;
 

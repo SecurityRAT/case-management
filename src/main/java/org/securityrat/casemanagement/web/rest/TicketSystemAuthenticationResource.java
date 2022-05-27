@@ -6,32 +6,36 @@ import org.securityrat.casemanagement.domain.TicketSystemInstance;
 import org.securityrat.casemanagement.repository.TicketSystemInstanceRepository;
 import org.securityrat.casemanagement.service.AccessTokenService;
 import org.securityrat.casemanagement.service.TemporaryTokenProperties;
+import org.securityrat.casemanagement.service.Utils;
 import org.securityrat.casemanagement.service.dto.TemporaryOAuthTokenDTO;
 import org.securityrat.casemanagement.service.interfaces.OAuthClient;
 import org.springframework.http.*;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/ticket-system-instance/oauth")
+@RequestMapping("/api/ticket-system-instance")
 @Slf4j
 public class TicketSystemAuthenticationResource {
 
-    private AccessTokenService accessTokenService;
-    private TicketSystemInstanceRepository ticketSystemInstanceRepository;
+    private final AccessTokenService accessTokenService;
+    private final TicketSystemInstanceRepository ticketSystemInstanceRepository;
 
     public TicketSystemAuthenticationResource(AccessTokenService accessTokenService, TicketSystemInstanceRepository ticketSystemInstanceRepository) {
         this.accessTokenService = accessTokenService;
         this.ticketSystemInstanceRepository = ticketSystemInstanceRepository;
     }
 
-    @GetMapping("/{id}/request-token/")
+    @GetMapping("/auth/{id}/check-access-token")
+    public ResponseEntity<String> checkAuthenticationStatus(@PathVariable Long id) {
+        return ResponseEntity.ok("ok");
+    }
+
+    @GetMapping(value = "/oauth/{id}/request-token/", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<TemporaryOAuthTokenDTO> getAuthorizationUrl(@PathVariable Long id) {
 
         log.debug("REST request to create a request-token for the ticket system {}", id);
@@ -51,11 +55,12 @@ public class TicketSystemAuthenticationResource {
 
     }
 
-    @GetMapping("/access-token")
+    @GetMapping("/oauth/access-token")
     public ResponseEntity<String> createAccessTokenWithCallback(@RequestHeader("referer") String referrer, @RequestParam(name = "oauth_token") String requestToken, @RequestParam(name = "oauth_verifier") String verificationCode) {
         try {
             URI url = new URI(referrer);
             String ticketInstanceUrl = url.toString().split(Constants.JIRASERVERAUTHORIZEPATH)[0];
+            ticketInstanceUrl = Utils.removeTrailingSlashInUrl(ticketInstanceUrl);
             Optional<TicketSystemInstance> ticketSystemInstance = this.ticketSystemInstanceRepository.findTicketSystemInstanceByUrl(ticketInstanceUrl);
             if (ticketSystemInstance.isEmpty()) {
                 return ResponseEntity.badRequest().body("Invalid ticket system URL provided in referer");
