@@ -5,7 +5,7 @@ import lombok.*;
 
 // todo add Ticket System Instance property
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class TemporaryTokenProperties {
+public abstract class AbstractTemporaryTokenProperties {
 
     @Getter
     private String tempToken;
@@ -19,10 +19,10 @@ public abstract class TemporaryTokenProperties {
     @Getter
     private String verificationCode;
 
-    protected TemporaryTokenProperties(@NonNull String authorizationUrl) {
+    protected AbstractTemporaryTokenProperties(@NonNull String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
     }
-    protected TemporaryTokenProperties(@NonNull String tempToken, @NonNull String verificationCode) {
+    protected AbstractTemporaryTokenProperties(@NonNull String tempToken, @NonNull String verificationCode) {
         this.tempToken = tempToken;
         this.verificationCode = verificationCode;
     }

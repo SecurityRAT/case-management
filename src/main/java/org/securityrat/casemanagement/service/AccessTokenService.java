@@ -42,8 +42,10 @@ public class AccessTokenService {
         return getOauthClient(ticketSystemInstance.getType().toString(), ticketSystemInstance);
     }
 
-    public Optional<TemporaryTokenProperties> createTempToken(OAuthClient oauthClient) {
-
+    public Optional<AbstractTemporaryTokenProperties> createTempToken(OAuthClient oauthClient) {
+        if (oauthClient == null) {
+            return Optional.empty();
+        }
         return Optional.of(oauthClient.getAndAuthorizeTemporaryToken());
     }
 
@@ -53,24 +55,22 @@ public class AccessTokenService {
         if (retrievedAccessToken != null) {
 
             Optional<User> user = this.userService.getUserWithAuthorities();
-            User currentUser = null;
+            User currentUser;
 
-            if (user.isEmpty()) {
+            if (user.isPresent()) {
+                currentUser = user.get();
+            } else {
                 Optional<AbstractAuthenticationToken> authToken = SecurityUtils.getCurrentUserAuthToken();
-                if (authToken.isEmpty()) {
+                if (!authToken.isPresent()) {
                     log.warn("Invalid user {}", user);
                     return false;
                 }
                 currentUser = this.userService.getUserFromAuthdentication(authToken.get());
-            } else {
-                currentUser = user.get();
             }
             log.debug("Access token was created for user {} and for ticket system instance {}", currentUser.getId(), ticketSystemInstance.getId());
             Set<AccessToken> accessTokens = this.accessTokenRepository.findAccessTokenByTicketSystemInstanceAndUser(ticketSystemInstance, currentUser);
             if (!accessTokens.isEmpty()) {
-                for (AccessToken accessToken : accessTokens) {
-                    this.accessTokenRepository.delete(accessToken);
-                }
+                this.accessTokenRepository.deleteAll(accessTokens);
                 log.info("Removed {} existing accessTokens for user {} to ticket system {}", accessTokens.size(), currentUser.getId(), ticketSystemInstance.getId());
             }
             return this.storeAccessToken(oauthClient, currentUser, ticketSystemInstance, retrievedAccessToken);

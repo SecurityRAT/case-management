@@ -1,12 +1,12 @@
 package org.securityrat.casemanagement.service.interfaces;
 
-import org.securityrat.casemanagement.service.TemporaryTokenProperties;
+import org.securityrat.casemanagement.service.AbstractTemporaryTokenProperties;
 
 import java.time.ZonedDateTime;
 
 public interface OAuthClient {
 
-    TemporaryTokenProperties getAndAuthorizeTemporaryToken();
+    AbstractTemporaryTokenProperties getAndAuthorizeTemporaryToken();
 
     String getAccessToken(String tmpToken, String authorizationCode);
 

@@ -6,11 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.securityrat.casemanagement.config.ApplicationProperties;
 import org.securityrat.casemanagement.config.Constants;
 import org.securityrat.casemanagement.domain.TicketSystemInstance;
-import org.securityrat.casemanagement.service.TemporaryTokenProperties;
+import org.securityrat.casemanagement.service.AbstractTemporaryTokenProperties;
 import org.securityrat.casemanagement.service.Utils;
 import org.securityrat.casemanagement.service.exceptions.TokenNotGeneratedException;
 import org.securityrat.casemanagement.service.interfaces.OAuthClient;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -25,8 +24,7 @@ public class JiraOAuthClient implements OAuthClient {
     private final String authorizationUrl;
 
     private final String consumerKey;
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
     public JiraOAuthClient(TicketSystemInstance ticketSystemInstance, ApplicationProperties applicationProperties) {
         String jiraBaseUrl = Utils.removeTrailingSlashInUrl(ticketSystemInstance.getUrl());
@@ -44,11 +42,11 @@ public class JiraOAuthClient implements OAuthClient {
      */
     @Override
     // todo: Add exception if invalid ticket system instance
-    public TemporaryTokenProperties getAndAuthorizeTemporaryToken() {
+    public AbstractTemporaryTokenProperties getAndAuthorizeTemporaryToken() {
         try {
             JiraOAuthGetTemporaryToken temporaryToken = oAuthGetAccessTokenFactory.getTemporaryToken(
-                consumerKey, this.applicationProperties.getJira().getPrivateKey(),
-                this.applicationProperties.getJira().getCallbackUrl());
+                consumerKey, this.applicationProperties.getJira().getOauth().getPrivateKey(),
+                this.applicationProperties.getJira().getOauth().getCallbackUrl());
             OAuthCredentialsResponse response = temporaryToken.execute();
 
             OAuthAuthorizeTemporaryTokenUrl authorizationURL = new OAuthAuthorizeTemporaryTokenUrl(authorizationUrl);
@@ -66,8 +64,8 @@ public class JiraOAuthClient implements OAuthClient {
     /**
      * Gets access token from JIRA server
      *
-     * @param tmpToken temporary request token
-     * @param authorizationCode   secret (verification code provided by JIRA after request token authorization)
+     * @param tmpToken          temporary request token
+     * @param authorizationCode secret (verification code provided by JIRA after request token authorization)
      * @return access token value
      * @throws TokenNotGeneratedException
      */
@@ -75,7 +73,7 @@ public class JiraOAuthClient implements OAuthClient {
     public String getAccessToken(String tmpToken, String authorizationCode) {
         try {
             JiraOAuthGetAccessToken oAuthAccessToken = oAuthGetAccessTokenFactory.getJiraOAuthGetAccessToken(
-                tmpToken, authorizationCode, consumerKey, this.applicationProperties.getJira().getPrivateKey());
+                tmpToken, authorizationCode, consumerKey, this.applicationProperties.getJira().getOauth().getPrivateKey());
             OAuthCredentialsResponse response = oAuthAccessToken.execute();
 
             return response.token;
@@ -88,13 +86,13 @@ public class JiraOAuthClient implements OAuthClient {
 
     @Override
     public ZonedDateTime getDefaultExpirationDate() {
-        Long validationPeriodInDays = this.applicationProperties.getJira().getValidationPeriod();
+        Long validationPeriodInDays = this.applicationProperties.getJira().getOauth().getValidationPeriod();
         return ZonedDateTime.now().plusDays(validationPeriodInDays);
     }
 
     @Override
     public String getCallbackUrl() {
-        return this.applicationProperties.getJira().getCallbackUrl();
+        return this.applicationProperties.getJira().getOauth().getCallbackUrl();
     }
 
 
