@@ -46,9 +46,15 @@ public class ApplicationProperties {
 
         @Getter
         private final ApplicationProperties.Jira.Oauth oauth = new ApplicationProperties.Jira.Oauth();
+        @Getter
+        private final ApplicationProperties.Jira.Oauth2 oauth2 = new ApplicationProperties.Jira.Oauth2();
 
         @NoArgsConstructor
         public static class Oauth {
+
+            @Getter
+            @Setter
+            private boolean active;
             @Getter
             private String callbackUrl;
 
@@ -69,8 +75,12 @@ public class ApplicationProperties {
                 }
             }
         }
+
         @NoArgsConstructor
         public static class Oauth2 {
+            @Getter
+            @Setter
+            private boolean active;
             @Getter
             private String callbackUrl;
 
@@ -100,7 +110,6 @@ public class ApplicationProperties {
             }
         }
     }
-
 
 
     @NoArgsConstructor
