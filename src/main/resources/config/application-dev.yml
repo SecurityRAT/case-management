@@ -141,7 +141,8 @@ jhipster:
 
 application:
   ticket-system:
-    type: JIRASERVER # JIRACLOUD
+    # Possible values: JIRADATACENTER, JIRACLOUD
+    type: JIRADATACENTER
   jira:
     # Activate either oauth or oauth2
     oauth:
@@ -166,4 +167,6 @@ application:
 
   security:
     aes:
+      # secret used to encrypt tokens before storage. Use a long random value.
+      # Use different values for the various deployment stages.
       secret: mylongsecret

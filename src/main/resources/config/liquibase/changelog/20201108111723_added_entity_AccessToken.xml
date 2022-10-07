@@ -25,15 +25,22 @@
             <column name="salt" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="user_id" type="varchar(100)">
-                <constraints nullable="false" />
+            <column name="refresh_token" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" />
             </column>
             <column name="ticket_instance_id" type="bigint">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="access_token" columnName="expiration_date" columnDataType="datetime"/>
+    </changeSet>
+
+    <changeSet id="20201108111723-1-relations" author="jhipster">
+
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 

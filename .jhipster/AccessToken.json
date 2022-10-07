@@ -35,6 +35,10 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "refreshToken",
+            "fieldType": "String"
         }
     ],
     "changelogDate": "20201108111723",

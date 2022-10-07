@@ -29,7 +29,6 @@ public class TicketSystemInstance implements Serializable {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    @JsonIgnore
     private TicketSystem type;
 
     @NotNull
@@ -39,6 +38,13 @@ public class TicketSystemInstance implements Serializable {
     @Column(name = "consumer_key")
     @JsonIgnore
     private String consumerKey;
+
+    @Column(name = "client_id")
+    private String clientId;
+
+    @Column(name = "client_secret")
+    @JsonIgnore
+    private String clientSecret;
 
     @OneToMany(mappedBy = "ticketInstance")
     @JsonIgnore
@@ -105,6 +111,32 @@ public class TicketSystemInstance implements Serializable {
         this.consumerKey = consumerKey;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
+    public TicketSystemInstance clientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public TicketSystemInstance clientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+        return this;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
     public Set<AccessToken> getAccessTokens() {
         return accessTokens;
     }
@@ -155,6 +187,8 @@ public class TicketSystemInstance implements Serializable {
             ", type='" + getType() + "'" +
             ", url='" + getUrl() + "'" +
             ", consumerKey='" + getConsumerKey() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", clientSecret='" + getClientSecret() + "'" +
             "}";
     }
 }

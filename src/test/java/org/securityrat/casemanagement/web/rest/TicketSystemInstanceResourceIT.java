@@ -38,14 +38,20 @@ public class TicketSystemInstanceResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final TicketSystem DEFAULT_TYPE = TicketSystem.JIRASERVER;
-    private static final TicketSystem UPDATED_TYPE = TicketSystem.JIRASERVER;
+    private static final TicketSystem DEFAULT_TYPE = TicketSystem.JIRADATACENTER;
+    private static final TicketSystem UPDATED_TYPE = TicketSystem.JIRADATACENTER;
 
     private static final String DEFAULT_URL = "AAAAAAAAAA";
     private static final String UPDATED_URL = "BBBBBBBBBB";
 
     private static final String DEFAULT_CONSUMER_KEY = "AAAAAAAAAA";
     private static final String UPDATED_CONSUMER_KEY = "BBBBBBBBBB";
+
+    private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
+
+    private static final String DEFAULT_CLIENT_SECRET = "AAAAAAAAAA";
+    private static final String UPDATED_CLIENT_SECRET = "BBBBBBBBBB";
 
     @Autowired
     private TicketSystemInstanceRepository ticketSystemInstanceRepository;
@@ -92,7 +98,9 @@ public class TicketSystemInstanceResourceIT {
             .name(DEFAULT_NAME)
             .type(DEFAULT_TYPE)
             .url(DEFAULT_URL)
-            .consumerKey(DEFAULT_CONSUMER_KEY);
+            .consumerKey(DEFAULT_CONSUMER_KEY)
+            .clientId(DEFAULT_CLIENT_ID)
+            .clientSecret(DEFAULT_CLIENT_SECRET);
         return ticketSystemInstance;
     }
     /**
@@ -106,7 +114,9 @@ public class TicketSystemInstanceResourceIT {
             .name(UPDATED_NAME)
             .type(UPDATED_TYPE)
             .url(UPDATED_URL)
-            .consumerKey(UPDATED_CONSUMER_KEY);
+            .consumerKey(UPDATED_CONSUMER_KEY)
+            .clientId(UPDATED_CLIENT_ID)
+            .clientSecret(UPDATED_CLIENT_SECRET);
         return ticketSystemInstance;
     }
 
@@ -134,6 +144,8 @@ public class TicketSystemInstanceResourceIT {
         assertThat(testTicketSystemInstance.getType()).isEqualTo(DEFAULT_TYPE);
         assertThat(testTicketSystemInstance.getUrl()).isEqualTo(DEFAULT_URL);
         assertThat(testTicketSystemInstance.getConsumerKey()).isEqualTo(DEFAULT_CONSUMER_KEY);
+        assertThat(testTicketSystemInstance.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testTicketSystemInstance.getClientSecret()).isEqualTo(DEFAULT_CLIENT_SECRET);
     }
 
     @Test
@@ -206,7 +218,9 @@ public class TicketSystemInstanceResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL)))
-            .andExpect(jsonPath("$.[*].consumerKey").value(hasItem(DEFAULT_CONSUMER_KEY)));
+            .andExpect(jsonPath("$.[*].consumerKey").value(hasItem(DEFAULT_CONSUMER_KEY)))
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID)))
+            .andExpect(jsonPath("$.[*].clientSecret").value(hasItem(DEFAULT_CLIENT_SECRET)));
     }
 
     @Test
@@ -223,7 +237,9 @@ public class TicketSystemInstanceResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
             .andExpect(jsonPath("$.url").value(DEFAULT_URL))
-            .andExpect(jsonPath("$.consumerKey").value(DEFAULT_CONSUMER_KEY));
+            .andExpect(jsonPath("$.consumerKey").value(DEFAULT_CONSUMER_KEY))
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID))
+            .andExpect(jsonPath("$.clientSecret").value(DEFAULT_CLIENT_SECRET));
     }
 
     @Test
@@ -250,7 +266,9 @@ public class TicketSystemInstanceResourceIT {
             .name(UPDATED_NAME)
             .type(UPDATED_TYPE)
             .url(UPDATED_URL)
-            .consumerKey(UPDATED_CONSUMER_KEY);
+            .consumerKey(UPDATED_CONSUMER_KEY)
+            .clientId(UPDATED_CLIENT_ID)
+            .clientSecret(UPDATED_CLIENT_SECRET);
 
         restTicketSystemInstanceMockMvc.perform(put("/api/ticket-system-instances")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -265,6 +283,8 @@ public class TicketSystemInstanceResourceIT {
         assertThat(testTicketSystemInstance.getType()).isEqualTo(UPDATED_TYPE);
         assertThat(testTicketSystemInstance.getUrl()).isEqualTo(UPDATED_URL);
         assertThat(testTicketSystemInstance.getConsumerKey()).isEqualTo(UPDATED_CONSUMER_KEY);
+        assertThat(testTicketSystemInstance.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testTicketSystemInstance.getClientSecret()).isEqualTo(UPDATED_CLIENT_SECRET);
     }
 
     @Test

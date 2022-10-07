@@ -31,6 +31,9 @@ public class AccessToken implements Serializable {
     @Column(name = "salt", nullable = false)
     private String salt;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @ManyToOne
     @JsonIgnoreProperties("accessTokens")
     private User user;
@@ -87,6 +90,19 @@ public class AccessToken implements Serializable {
         this.salt = salt;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public AccessToken refreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+        return this;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     public User getUser() {
         return user;
     }
@@ -137,6 +153,7 @@ public class AccessToken implements Serializable {
             ", token='" + getToken() + "'" +
             ", expirationDate='" + getExpirationDate() + "'" +
             ", salt='" + getSalt() + "'" +
+            ", refreshToken='" + getRefreshToken() + "'" +
             "}";
     }
 }

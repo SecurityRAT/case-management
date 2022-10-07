@@ -37,7 +37,7 @@ public class ApplicationProperties {
         private String type;
 
         public TicketSystem() {
-            this.type = org.securityrat.casemanagement.domain.enumeration.TicketSystem.JIRASERVER.name();
+            this.type = org.securityrat.casemanagement.domain.enumeration.TicketSystem.JIRADATACENTER.name();
         }
     }
 
@@ -52,9 +52,6 @@ public class ApplicationProperties {
         @NoArgsConstructor
         public static class Oauth {
 
-            @Getter
-            @Setter
-            private boolean active;
             @Getter
             private String callbackUrl;
 
@@ -78,9 +75,6 @@ public class ApplicationProperties {
 
         @NoArgsConstructor
         public static class Oauth2 {
-            @Getter
-            @Setter
-            private boolean active;
             @Getter
             private String callbackUrl;
 

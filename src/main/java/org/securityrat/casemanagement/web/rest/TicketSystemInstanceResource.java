@@ -54,7 +54,6 @@ public class TicketSystemInstanceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/ticket-system-instances")
-    // todo Replace this with a dto
     public ResponseEntity<TicketSystemInstance> createTicketSystemInstance(@Valid @RequestBody TicketSystemInstance ticketSystemInstance) throws URISyntaxException {
         log.debug("REST request to save TicketSystemInstance : {}", ticketSystemInstance);
         if (ticketSystemInstance.getId() != null) {
@@ -76,6 +75,7 @@ public class TicketSystemInstanceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/ticket-system-instances")
+    // todo: change the TicketSystemInstance with DTO
     public ResponseEntity<TicketSystemInstance> updateTicketSystemInstance(@Valid @RequestBody TicketSystemInstance ticketSystemInstance) throws URISyntaxException {
         log.debug("REST request to update TicketSystemInstance : {}", ticketSystemInstance);
         if (ticketSystemInstance.getId() == null) {

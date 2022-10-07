@@ -23,6 +23,14 @@
         {
             "fieldName": "consumerKey",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "clientSecret",
+            "fieldType": "String"
         }
     ],
     "relationships": [

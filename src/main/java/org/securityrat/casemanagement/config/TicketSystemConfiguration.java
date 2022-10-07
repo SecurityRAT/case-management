@@ -11,7 +11,7 @@ import java.security.spec.InvalidKeySpecException;
 public class TicketSystemConfiguration {
 
     public TicketSystemConfiguration(ApplicationProperties applicationProperties) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        if (TicketSystem.valueOf(applicationProperties.getTicketSystem().getType()).equals(TicketSystem.JIRASERVER)) {
+        if (TicketSystem.valueOf(applicationProperties.getTicketSystem().getType()).equals(TicketSystem.JIRADATACENTER)) {
             SecurityUtils.getPrivateKey(applicationProperties.getJira().getOauth().getPrivateKey());
         }
 

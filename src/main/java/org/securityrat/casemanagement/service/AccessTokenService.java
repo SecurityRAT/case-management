@@ -125,7 +125,7 @@ public class AccessTokenService {
             defaultTicketSystemType = TicketSystem.valueOf(ticketSystemType);
         }
 
-        if (TicketSystem.JIRASERVER.equals(defaultTicketSystemType)) {
+        if (TicketSystem.JIRADATACENTER.equals(defaultTicketSystemType)) {
             log.info("OAuthClient created for ticket system instance {}", ticketSystemInstance.getId());
             return new JiraOAuthClient(ticketSystemInstance, this.applicationProperties);
         }
