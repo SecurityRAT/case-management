@@ -85,7 +85,6 @@ spring:
     locator:
       discovery:
         enabled: true
-
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
 # keytool -genkey -alias casemanagement -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
@@ -147,4 +146,33 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  ticket-system:
+    # Possible values: JIRADATACENTER, JIRACLOUD
+    type: JIRADATACENTER
+  jira:
+    # Activate either oauth or oauth2
+    datacenter:
+      oauth:
+        # private key in pkcs8 format
+        private-key: ""
+        # validity of the access-token. Jira stores them for 5 years. https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/#step-4--make-an-authenticated-request-to-the-jira-rest-api
+        validation-period: 1800
+        callback-url: "http://localhost:8080/services/casemanagement/api/ticket-system-instance/oauth/access-token"
+      oauth2:
+        redirect_uri:
+        # For jira server / data-center: [read, write] https://confluence.atlassian.com/adminjiraserver/jira-oauth-2-0-provider-api-1115659070.html#JiraOAuth2.0providerAPI-scopes
+        # For jira cloud: ["read:jira-work", "write:jira-work"]  https://developer.atlassian.com/cloud/jira/platform/scopes-for-oauth-2-3LO-and-forge-apps/#classic-scopes:
+        scopes: ["read", "write"]
+    cloud:
+      oauth2:
+        # ["read:jira-work", "write:jira-work"]  https://developer.atlassian.com/cloud/jira/platform/scopes-for-oauth-2-3LO-and-forge-apps/#classic-scopes:
+        scopes: [ "read:jira-work", "write:jira-work" ]
+        # Leave EMPTY for Jira server / data center. For Jira cloud, use the values commented https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/#1--direct-the-user-to-the-authorization-url-to-get-an-authorization-code
+        audience: # api.atlassian.com
+        prompt: # consent
+
+
+  security:
+    aes:
+      secret: mylongsecret

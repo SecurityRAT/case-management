@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.securityrat.casemanagement.domain.enumeration.TicketSystem;
 
 /**
@@ -34,7 +35,19 @@ public class TicketSystemInstance implements Serializable {
     @Column(name = "url", nullable = false)
     private String url;
 
+    @Column(name = "consumer_key")
+    @JsonIgnore
+    private String consumerKey;
+
+    @Column(name = "client_id")
+    private String clientId;
+
+    @Column(name = "client_secret")
+    @JsonIgnore
+    private String clientSecret;
+
     @OneToMany(mappedBy = "ticketInstance")
+    @JsonIgnore
     private Set<AccessToken> accessTokens = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -83,6 +96,45 @@ public class TicketSystemInstance implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getConsumerKey() {
+        return consumerKey;
+    }
+
+    public TicketSystemInstance consumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+        return this;
+    }
+
+    public void setConsumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public TicketSystemInstance clientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public TicketSystemInstance clientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+        return this;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
     public Set<AccessToken> getAccessTokens() {
@@ -134,6 +186,9 @@ public class TicketSystemInstance implements Serializable {
             ", name='" + getName() + "'" +
             ", type='" + getType() + "'" +
             ", url='" + getUrl() + "'" +
+            ", consumerKey='" + getConsumerKey() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", clientSecret='" + getClientSecret() + "'" +
             "}";
     }
 }

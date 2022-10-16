@@ -22,6 +22,12 @@
             <column name="expiration_date" type="datetime">
                 <constraints nullable="true" />
             </column>
+            <column name="salt" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="refresh_token" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="user_id" type="bigint">
                 <constraints nullable="true" />
             </column>

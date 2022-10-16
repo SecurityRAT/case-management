@@ -69,6 +69,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<AccessToken> accessTokens = new HashSet<>();
+
     public String getId() {
         return id;
     }
@@ -140,6 +144,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public Set<AccessToken> getAccessTokens() {
+        return accessTokens;
+    }
+
+    public void setAccessTokens(Set<AccessToken> accessTokens) {
+        this.accessTokens = accessTokens;
     }
 
     @Override

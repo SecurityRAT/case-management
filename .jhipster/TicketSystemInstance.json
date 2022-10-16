@@ -19,6 +19,18 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "consumerKey",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "clientSecret",
+            "fieldType": "String"
         }
     ],
     "relationships": [
@@ -31,7 +43,7 @@
     ],
     "changelogDate": "20201108112112",
     "entityTableName": "ticket_system_instance",
-    "dto": "no",
+    "dto": "yes",
     "pagination": "infinite-scroll",
     "service": "no",
     "jpaMetamodelFiltering": false,
@@ -39,5 +51,7 @@
     "readOnly": false,
     "clientRootFolder": "caseManagement",
     "applications": "*",
-    "microserviceName": "caseManagement"
+    "microserviceName": "caseManagement",
+    "searchEngine": false,
+    "databaseType": "sql"
 }

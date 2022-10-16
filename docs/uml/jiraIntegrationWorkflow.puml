@@ -1,0 +1,66 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram'
+
+autonumber
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+actor user
+entity gateway
+entity caseManagement
+database caseManagementDB
+entity Jira
+
+note over gateway
+    All Requests are proxied
+    via this component
+end note
+
+user -> caseManagement: Export artifact requirement
+activate user
+caseManagement -> caseManagementDB: Get access token
+activate caseManagement
+activate caseManagementDB
+caseManagementDB --> caseManagement: accessToken Object
+deactivate caseManagementDB
+
+alt ticket system instance in DB
+
+alt Access token exist in DB
+    caseManagement -> Jira: Check validity of access token
+    activate Jira
+    Jira --> caseManagement: Response
+end
+
+alt Access token doesn't exist in DB or token invalid
+    caseManagement -> Jira: Get request token
+    Jira --> caseManagement: request token & secret
+    caseManagement --> user: Temporary Jira authorization URL with request token
+    user -> user: Open temporary JIRA authorization URL in new Tab to give authorization
+    user -> Jira: User authorizes token
+    Jira --> user: Redirect to callback URL with access_code
+    user -> caseManagement: Begin redirect Callback URL with access_code
+    caseManagement -> Jira: Get access token with access code
+    Jira --> caseManagement: Access token
+    caseManagement -> caseManagement: Encrypt access token
+    caseManagement -> caseManagementDB: Store encrypted access token
+    activate caseManagementDB
+    caseManagementDB --> caseManagement:
+    deactivate caseManagementDB
+    caseManagement --> user: Authorization complete
+    user -> caseManagement: Export artifact requirements
+end
+
+caseManagement -> Jira: Export requirements (with access token) to Ticket
+Jira --> caseManagement: Ticket updated
+deactivate Jira
+caseManagement --> user: Requirements exported
+else
+caseManagement --> user: 400 Invalid Ticket System URL
+end
+deactivate caseManagement
+deactivate user
+@enduml

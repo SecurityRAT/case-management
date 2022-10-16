@@ -49,6 +49,11 @@ spring:
     hikari:
       poolName: Hikari
       auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
   h2:
     console:
       enabled: false
@@ -62,6 +67,12 @@ spring:
       hibernate.cache.use_second_level_cache: false
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: false
+      # modify batch size as necessary
+      hibernate.jdbc.batch_size: 25
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
@@ -128,4 +139,34 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  ticket-system:
+    # Possible values: JIRADATACENTER, JIRACLOUD
+    type: JIRADATACENTER
+  jira:
+    # Activate either oauth or oauth2
+    oauth:
+      active: true
+      # private key in pkcs8 format
+      private-key: "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBALPWJwrLuChSWz79OW2frZYjeeQJqAmD0POXbTiQMWwIihBi3TB9pYNbY+5aJYTpBPP9Ol31+MlfaPJax8ZqFyI2+jBsnZD0+IA7esaLmB7dXCp5nVgrtEGiq4A6SmnAx39GAYjwaWkgArOIZ8XOzLkP+9AJRK4o6bJB4XGmpnSRAgMBAAECgYBI4cFw3p8DuFzCal2bz9rJvhboFAHF2WYVUokxIz7kSZGqkmaSAFnTonYdYutRsh4Pw9Cjw8vP0Jr3nVLZVqWIygNGk3IWuIZIMPonlCOkKdfukXmY4wBoLuLwDso3k0BlmbDCGJnP3e+3oAQONQ9CeH9updNbRXqvYXnHuj9wAQJBAOP0JqvbBp05u+5yvZaxLDK2sW4NidErewHvd03pp/UfyYEn6aJmiUFM8ne8m2EE8JgsR3Pgrhj7CS+1RyUih2kCQQDJ9nTecLUc3PyFJMqD6EF+4uyd/TM+iA0cniCAeziRIU1EU36FQqN/GXqXL/atpo3Kc9weUN3lKCLwdwbXzsbpAkB9DMLqJA1M0w81j9xRfoAwkehj5yljhebE+QkJxNROtFFmeO7CGF3TZNLevKjAYGVcFW5dMzROn+g6M8gDpx2BAkAmMnm6FGD8u4L6/5FZz1SL1glgfCH0ArFQJ0wIYMW7FSxS7uOv+oGHqV75NzYVc7m/f5gzF6JQE/4/spNVv6L5AkB7Zc3IXW9tyre7xe41d4r3DxO8UJk7nAL/uDZfIdXSA6BmjQHbS6i9yhWjlFjsY+qbPovXJoPkmjqPR4Uq6TF8"
+      # validity of the access-token. Jira stores them for 5 years. https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/#step-4--make-an-authenticated-request-to-the-jira-rest-api
+      validation-period: 1800
+      callback-url: "http://localhost:8080/services/casemanagement/api/ticket-system-instance/oauth/access-token"
+    oauth2:
+      active: true
+      callback-url:
+      client-id:
+      client-sefcret:
+      # For jira server / data-center: [read, write] https://confluence.atlassian.com/adminjiraserver/jira-oauth-2-0-provider-api-1115659070.html#JiraOAuth2.0providerAPI-scopes
+      # For jira cloud: ["read:jira-work", "write:jira-work"]  https://developer.atlassian.com/cloud/jira/platform/scopes-for-oauth-2-3LO-and-forge-apps/#classic-scopes:
+      scopes: ["read", "write"]
+      # Leave EMPTY for Jira server / data center. For Jira cloud, use the values commented https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/#1--direct-the-user-to-the-authorization-url-to-get-an-authorization-code
+      prompt: # api.atlassian.com
+      audience: # consent
+
+
+  security:
+    aes:
+      # secret used to encrypt tokens before storage. Use a long random value.
+      # Use different values for the various deployment stages.
+      secret: mylongsecret

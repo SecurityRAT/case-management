@@ -13,10 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -76,6 +75,7 @@ public class TicketSystemInstanceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/ticket-system-instances")
+    // todo: change the TicketSystemInstance with DTO
     public ResponseEntity<TicketSystemInstance> updateTicketSystemInstance(@Valid @RequestBody TicketSystemInstance ticketSystemInstance) throws URISyntaxException {
         log.debug("REST request to update TicketSystemInstance : {}", ticketSystemInstance);
         if (ticketSystemInstance.getId() == null) {

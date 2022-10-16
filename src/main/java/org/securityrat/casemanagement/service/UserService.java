@@ -179,7 +179,7 @@ public class UserService {
      * @param authToken the authentication token.
      * @return the appUser from the authentication.
      */
-    public UserDTO getUserFromAuthentication(AbstractAuthenticationToken authToken) {
+    public User getUserFromAuthdentication(AbstractAuthenticationToken authToken) {
         Map<String, Object> attributes;
         if (authToken instanceof OAuth2AuthenticationToken) {
             attributes = ((OAuth2AuthenticationToken) authToken).getPrincipal().getAttributes();
@@ -197,7 +197,11 @@ public class UserService {
                 return auth;
             })
             .collect(Collectors.toSet()));
-        return new UserDTO(syncUserWithIdP(attributes, appUser));
+        return syncUserWithIdP(attributes, appUser);
+    }
+
+    public UserDTO getUserDTOFromAuthentication(AbstractAuthenticationToken authToken) {
+        return new UserDTO(getUserFromAuthdentication(authToken));
     }
 
     private static User getUser(Map<String, Object> details) {
@@ -209,8 +213,8 @@ public class UserService {
         } else {
             appUser.setId((String) details.get("sub"));
         }
-        if (details.get("preferred_username") != null) {
-            appUser.setLogin(((String) details.get("preferred_username")).toLowerCase());
+        if (details.get(Constants.PREFFEREDUSERPROPERTY) != null) {
+            appUser.setLogin(((String) details.get(Constants.PREFFEREDUSERPROPERTY)).toLowerCase());
         } else if (appUser.getLogin() == null) {
             appUser.setLogin(appUser.getId());
         }
