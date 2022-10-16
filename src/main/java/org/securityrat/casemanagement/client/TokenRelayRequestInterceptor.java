@@ -1,11 +1,9 @@
 package org.securityrat.casemanagement.client;
 
-import org.securityrat.casemanagement.security.oauth2.AuthorizationHeaderUtil;
-
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-
 import java.util.Optional;
+import org.securityrat.casemanagement.security.oauth2.AuthorizationHeaderUtil;
 
 public class TokenRelayRequestInterceptor implements RequestInterceptor {
 

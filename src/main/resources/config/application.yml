@@ -18,10 +18,10 @@ feign:
   hystrix:
     enabled: true
   # client:
-  #     config:
-  #         default:
-  #             connectTimeout: 5000
-  #             readTimeout: 5000
+  #   config:
+  #     default:
+  #       connectTimeout: 5000
+  #       readTimeout: 5000
 
 # See https://github.com/Netflix/Hystrix/wiki/Configuration
 hystrix:
@@ -32,7 +32,7 @@ hystrix:
           strategy: SEMAPHORE
           # See https://github.com/spring-cloud/spring-cloud-netflix/issues/1330
           # thread:
-          #     timeoutInMilliseconds: 10000
+          #   timeoutInMilliseconds: 10000
   shareSecurityContext: true
 
 management:
@@ -40,17 +40,24 @@ management:
     web:
       base-path: /management
       exposure:
-        include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump']
+        include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump', 'liquibase']
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: when_authorized
       roles: 'ROLE_ADMIN'
+      probes:
+        enabled: true
     jhimetrics:
       enabled: true
   info:
     git:
       mode: full
   health:
+    group:
+      liveness:
+        include: livenessState
+      readiness:
+        include: readinessState,datasource
     mail:
       enabled: false # When using the MailService, configure an SMTP server and set this to true
   metrics:
@@ -74,7 +81,9 @@ management:
       application: ${spring.application.name}
     web:
       server:
-        auto-time-requests: true
+        request:
+          autotime:
+            enabled: true
 
 spring:
   application:
@@ -88,6 +97,17 @@ spring:
       config:
         watch:
           enabled: false
+  profiles:
+    # The commented value for `active` can be replaced with valid Spring profiles to load.
+    # Otherwise, it will be filled in by maven when building the JAR file
+    # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+    active: #spring.profiles.active#
+    group:
+      dev:
+        - dev
+        - api-docs
+        # Uncomment to activate TLS for the dev profile
+        #- tls
   jmx:
     enabled: false
   data:
@@ -98,6 +118,17 @@ spring:
     open-in-view: false
     properties:
       hibernate.jdbc.time_zone: UTC
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      # modify batch size as necessary
+      hibernate.jdbc.batch_size: 25
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true
     hibernate:
       ddl-auto: none
       naming:
@@ -107,9 +138,6 @@ spring:
     basename: i18n/messages
   main:
     allow-bean-definition-overriding: true
-  mvc:
-    favicon:
-      enabled: false
   task:
     execution:
       thread-name-prefix: case-management-task-
@@ -136,6 +164,7 @@ spring:
           oidc:
             client-id: internal
             client-secret: internal
+            scope: openid,profile,email
 
 server:
   servlet:
@@ -159,16 +188,17 @@ jhipster:
     name: 'caseManagementApp'
   # By default CORS is disabled. Uncomment to enable.
   # cors:
-  #     allowed-origins: "*"
-  #     allowed-methods: "*"
-  #     allowed-headers: "*"
-  #     exposed-headers: "Authorization,Link,X-Total-Count"
-  #     allow-credentials: true
-  #     max-age: 1800
+  #   allowed-origins: "*"
+  #   allowed-methods: "*"
+  #   allowed-headers: "*"
+  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+  #   allow-credentials: true
+  #   max-age: 1800
   mail:
     from: caseManagement@localhost
-  swagger:
-    default-include-pattern: /api/.*
+  api-docs:
+    default-include-pattern: ${server.servlet.context-path:}/api/.*
+    management-include-pattern: ${server.servlet.context-path:}/management/.*
     title: caseManagement API
     description: caseManagement API documentation
     version: 0.0.1
@@ -176,7 +206,7 @@ jhipster:
     contact-name:
     contact-url:
     contact-email:
-    license:
+    license: unlicensed
     license-url:
   security:
     oauth2:

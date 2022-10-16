@@ -1,10 +1,8 @@
 package org.securityrat.casemanagement.client;
 
-import org.springframework.context.annotation.Bean;
-
 import feign.RequestInterceptor;
-
 import org.securityrat.casemanagement.security.oauth2.AuthorizationHeaderUtil;
+import org.springframework.context.annotation.Bean;
 
 public class OAuth2InterceptedFeignConfiguration {
 

@@ -14,21 +14,33 @@
 # ===================================================================
 
 spring:
+  profiles:
+    # Uncomment the following line to enable tests against production database type rather than H2, using Testcontainers
+    #active: testcontainers
   application:
     name: caseManagement
+  cloud:
+    consul:
+      discovery:
+        enabled: false
+        instanceId: ${spring.application.name}:${spring.application.instance-id:${random.value}}
+      config:
+        enabled: false
+      enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:mem:caseManagement;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:casemanagement;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     name:
     username:
     password:
     hikari:
       auto-commit: false
+  jackson:
+    serialization:
+      write-durations-as-timestamps: false
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
-    database: H2
+    database-platform: tech.jhipster.domain.util.FixedH2Dialect
     open-in-view: false
-    show-sql: false
     hibernate:
       ddl-auto: none
       naming:
@@ -42,6 +54,7 @@ spring:
       hibernate.generate_statistics: false
       hibernate.hbm2ddl.auto: validate
       hibernate.jdbc.time_zone: UTC
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
   liquibase:
     contexts: test
   mail:
@@ -50,9 +63,6 @@ spring:
     allow-bean-definition-overriding: true
   messages:
     basename: i18n/messages
-  mvc:
-    favicon:
-      enabled: false
   task:
     execution:
       thread-name-prefix: case-management-task-
@@ -89,7 +99,7 @@ jhipster:
     name: 'caseManagementApp'
   logging:
     # To test json console appender
-    use-json-format: true # By default, logs are in Json format
+    use-json-format: false
     logstash:
       enabled: false
       host: localhost
@@ -98,11 +108,6 @@ jhipster:
   mail:
     from: test@localhost
     base-url: http://127.0.0.1:8080
-  metrics:
-    logs: # Reports metrics in the logs
-      enabled: true
-      report-frequency: 60 # in seconds
-
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

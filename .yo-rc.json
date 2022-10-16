@@ -3,7 +3,7 @@
     "promptValues": {
       "packageName": "org.securityrat.casemanagement"
     },
-    "jhipsterVersion": "6.6.0",
+    "jhipsterVersion": "7.0.0",
     "baseName": "caseManagement",
     "packageName": "org.securityrat.casemanagement",
     "packageFolder": "org/securityrat/casemanagement",
@@ -34,6 +34,18 @@
     "otherModules": [],
     "blueprints": [],
     "embeddableLaunchScript": false,
-    "creationTimestamp": 1577042681890
+    "creationTimestamp": 1577042681890,
+    "skipServer": false,
+    "skipCheckLengthOfIdentifier": false,
+    "skipFakeData": false,
+    "pages": [],
+    "reactive": false,
+    "clientFramework": "angularX",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "withAdminUi": true,
+    "nativeLanguage": "en",
+    "languages": ["en", "fr"],
+    "entities": ["AccessToken", "TicketSystemInstance"]
   }
 }

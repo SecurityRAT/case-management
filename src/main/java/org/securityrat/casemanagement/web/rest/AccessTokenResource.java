@@ -1,13 +1,16 @@
 package org.securityrat.casemanagement.web.rest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.securityrat.casemanagement.domain.AccessToken;
 import org.securityrat.casemanagement.repository.AccessTokenRepository;
 import org.securityrat.casemanagement.repository.UserRepository;
 import org.securityrat.casemanagement.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,16 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link org.securityrat.casemanagement.domain.AccessToken}.
@@ -62,31 +61,42 @@ public class AccessTokenResource {
         if (accessToken.getId() != null) {
             throw new BadRequestAlertException("A new accessToken cannot already have an ID", ENTITY_NAME, "idexists");
         }
-
         if (accessToken.getUser() != null) {
             // Save user in case it's new and only exists in gateway
             userRepository.save(accessToken.getUser());
         }
         AccessToken result = accessTokenRepository.save(accessToken);
-        return ResponseEntity.created(new URI("/api/access-tokens/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/access-tokens/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /access-tokens} : Updates an existing accessToken.
+     * {@code PUT  /access-tokens/:id} : Updates an existing accessToken.
      *
+     * @param id the id of the accessToken to save.
      * @param accessToken the accessToken to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated accessToken,
      * or with status {@code 400 (Bad Request)} if the accessToken is not valid,
      * or with status {@code 500 (Internal Server Error)} if the accessToken couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/access-tokens")
-    public ResponseEntity<AccessToken> updateAccessToken(@Valid @RequestBody AccessToken accessToken) throws URISyntaxException {
-        log.debug("REST request to update AccessToken : {}", accessToken);
+    @PutMapping("/access-tokens/{id}")
+    public ResponseEntity<AccessToken> updateAccessToken(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody AccessToken accessToken
+    ) throws URISyntaxException {
+        log.debug("REST request to update AccessToken : {}, {}", id, accessToken);
         if (accessToken.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, accessToken.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!accessTokenRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
         if (accessToken.getUser() != null) {
@@ -94,17 +104,77 @@ public class AccessTokenResource {
             userRepository.save(accessToken.getUser());
         }
         AccessToken result = accessTokenRepository.save(accessToken);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, accessToken.getId().toString()))
             .body(result);
     }
 
     /**
+     * {@code PATCH  /access-tokens/:id} : Partial updates given fields of an existing accessToken, field will ignore if it is null
+     *
+     * @param id the id of the accessToken to save.
+     * @param accessToken the accessToken to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated accessToken,
+     * or with status {@code 400 (Bad Request)} if the accessToken is not valid,
+     * or with status {@code 404 (Not Found)} if the accessToken is not found,
+     * or with status {@code 500 (Internal Server Error)} if the accessToken couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/access-tokens/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<AccessToken> partialUpdateAccessToken(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody AccessToken accessToken
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update AccessToken partially : {}, {}", id, accessToken);
+        if (accessToken.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, accessToken.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!accessTokenRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        if (accessToken.getUser() != null) {
+            // Save user in case it's new and only exists in gateway
+            userRepository.save(accessToken.getUser());
+        }
+
+        Optional<AccessToken> result = accessTokenRepository
+            .findById(accessToken.getId())
+            .map(
+                existingAccessToken -> {
+                    if (accessToken.getToken() != null) {
+                        existingAccessToken.setToken(accessToken.getToken());
+                    }
+                    if (accessToken.getExpirationDate() != null) {
+                        existingAccessToken.setExpirationDate(accessToken.getExpirationDate());
+                    }
+                    if (accessToken.getSalt() != null) {
+                        existingAccessToken.setSalt(accessToken.getSalt());
+                    }
+                    if (accessToken.getRefreshToken() != null) {
+                        existingAccessToken.setRefreshToken(accessToken.getRefreshToken());
+                    }
+
+                    return existingAccessToken;
+                }
+            )
+            .map(accessTokenRepository::save);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, accessToken.getId().toString())
+        );
+    }
+
+    /**
      * {@code GET  /access-tokens} : get all the accessTokens.
      *
-
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of accessTokens in body.
      */
     @GetMapping("/access-tokens")
@@ -138,6 +208,9 @@ public class AccessTokenResource {
     public ResponseEntity<Void> deleteAccessToken(@PathVariable Long id) {
         log.debug("REST request to delete AccessToken : {}", id);
         accessTokenRepository.deleteById(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

@@ -1,13 +1,14 @@
 package org.securityrat.casemanagement.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 import org.securityrat.casemanagement.web.rest.TestUtil;
 
-public class AccessTokenTest {
+class AccessTokenTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(AccessToken.class);
         AccessToken accessToken1 = new AccessToken();
         accessToken1.setId(1L);

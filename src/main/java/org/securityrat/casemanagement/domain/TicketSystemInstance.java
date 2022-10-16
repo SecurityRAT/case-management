@@ -1,12 +1,11 @@
 package org.securityrat.casemanagement.domain;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import org.securityrat.casemanagement.domain.enumeration.TicketSystem;
 
 /**
@@ -19,7 +18,8 @@ public class TicketSystemInstance implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @Column(name = "name")
@@ -44,9 +44,10 @@ public class TicketSystemInstance implements Serializable {
     private String clientSecret;
 
     @OneToMany(mappedBy = "ticketInstance")
+    @JsonIgnoreProperties(value = { "user", "ticketInstance" }, allowSetters = true)
     private Set<AccessToken> accessTokens = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -55,8 +56,13 @@ public class TicketSystemInstance implements Serializable {
         this.id = id;
     }
 
+    public TicketSystemInstance id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public TicketSystemInstance name(String name) {
@@ -69,7 +75,7 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public TicketSystem getType() {
-        return type;
+        return this.type;
     }
 
     public TicketSystemInstance type(TicketSystem type) {
@@ -82,7 +88,7 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public String getUrl() {
-        return url;
+        return this.url;
     }
 
     public TicketSystemInstance url(String url) {
@@ -95,7 +101,7 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public String getConsumerKey() {
-        return consumerKey;
+        return this.consumerKey;
     }
 
     public TicketSystemInstance consumerKey(String consumerKey) {
@@ -108,7 +114,7 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public String getClientId() {
-        return clientId;
+        return this.clientId;
     }
 
     public TicketSystemInstance clientId(String clientId) {
@@ -121,7 +127,7 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public String getClientSecret() {
-        return clientSecret;
+        return this.clientSecret;
     }
 
     public TicketSystemInstance clientSecret(String clientSecret) {
@@ -134,11 +140,11 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public Set<AccessToken> getAccessTokens() {
-        return accessTokens;
+        return this.accessTokens;
     }
 
     public TicketSystemInstance accessTokens(Set<AccessToken> accessTokens) {
-        this.accessTokens = accessTokens;
+        this.setAccessTokens(accessTokens);
         return this;
     }
 
@@ -155,9 +161,16 @@ public class TicketSystemInstance implements Serializable {
     }
 
     public void setAccessTokens(Set<AccessToken> accessTokens) {
+        if (this.accessTokens != null) {
+            this.accessTokens.forEach(i -> i.setTicketInstance(null));
+        }
+        if (accessTokens != null) {
+            accessTokens.forEach(i -> i.setTicketInstance(this));
+        }
         this.accessTokens = accessTokens;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -172,9 +185,11 @@ public class TicketSystemInstance implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "TicketSystemInstance{" +

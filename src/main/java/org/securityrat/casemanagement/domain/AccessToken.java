@@ -1,11 +1,10 @@
 package org.securityrat.casemanagement.domain;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * A AccessToken.
@@ -17,7 +16,8 @@ public class AccessToken implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @NotNull
@@ -35,14 +35,13 @@ public class AccessToken implements Serializable {
     private String refreshToken;
 
     @ManyToOne
-    @JsonIgnoreProperties("accessTokens")
     private User user;
 
     @ManyToOne
-    @JsonIgnoreProperties("accessTokens")
+    @JsonIgnoreProperties(value = { "accessTokens" }, allowSetters = true)
     private TicketSystemInstance ticketInstance;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -51,8 +50,13 @@ public class AccessToken implements Serializable {
         this.id = id;
     }
 
+    public AccessToken id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getToken() {
-        return token;
+        return this.token;
     }
 
     public AccessToken token(String token) {
@@ -65,7 +69,7 @@ public class AccessToken implements Serializable {
     }
 
     public ZonedDateTime getExpirationDate() {
-        return expirationDate;
+        return this.expirationDate;
     }
 
     public AccessToken expirationDate(ZonedDateTime expirationDate) {
@@ -78,7 +82,7 @@ public class AccessToken implements Serializable {
     }
 
     public String getSalt() {
-        return salt;
+        return this.salt;
     }
 
     public AccessToken salt(String salt) {
@@ -91,7 +95,7 @@ public class AccessToken implements Serializable {
     }
 
     public String getRefreshToken() {
-        return refreshToken;
+        return this.refreshToken;
     }
 
     public AccessToken refreshToken(String refreshToken) {
@@ -104,11 +108,11 @@ public class AccessToken implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public AccessToken user(User user) {
-        this.user = user;
+        this.setUser(user);
         return this;
     }
 
@@ -117,18 +121,19 @@ public class AccessToken implements Serializable {
     }
 
     public TicketSystemInstance getTicketInstance() {
-        return ticketInstance;
+        return this.ticketInstance;
     }
 
     public AccessToken ticketInstance(TicketSystemInstance ticketSystemInstance) {
-        this.ticketInstance = ticketSystemInstance;
+        this.setTicketInstance(ticketSystemInstance);
         return this;
     }
 
     public void setTicketInstance(TicketSystemInstance ticketSystemInstance) {
         this.ticketInstance = ticketSystemInstance;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -143,9 +148,11 @@ public class AccessToken implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "AccessToken{" +
