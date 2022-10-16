@@ -1,0 +1,57 @@
+{
+    "name": "TicketSystemInstance",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "type",
+            "fieldType": "TicketSystem",
+            "fieldValues": "JIRA",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "url",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "consumerKey",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "clientSecret",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "accessToken",
+            "otherEntityRelationshipName": "ticketInstance",
+            "relationshipName": "accessToken"
+        }
+    ],
+    "changelogDate": "20201108112112",
+    "entityTableName": "ticket_system_instance",
+    "dto": "yes",
+    "pagination": "infinite-scroll",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "caseManagement",
+    "applications": "*",
+    "microserviceName": "caseManagement",
+    "searchEngine": false,
+    "databaseType": "sql"
+}
