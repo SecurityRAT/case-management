@@ -152,6 +152,13 @@ ansi@^0.3.0, ansi@~0.3.1:
   resolved "https://registry.yarnpkg.com/ansi/-/ansi-0.3.1.tgz#0c42d4fb17160d5a9af1e484bace1c66922c1b21"
   integrity sha1-DELU+xcWDVqa8eSEus4cZpIsGyE=
 
+appUser-home@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/appUser-home/-/appUser-home-2.0.0.tgz#9c70bfd8169bc1dcbf48604e0f04b8b49cde9e9f"
+  integrity sha1-nHC/2Babwdy/SGBODwS4tJzenp8=
+  dependencies:
+    os-homedir "^1.0.0"
+
 are-we-there-yet@~1.1.2:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/are-we-there-yet/-/are-we-there-yet-1.1.5.tgz#4b35c2944f062a8bfcda66410760350fe9ddfc21"
@@ -3427,9 +3434,9 @@ qs@^6.4.0:
   integrity sha512-Cxm7/SS/y/Z3MHWSxXb8lIFqgqBowP5JMlTUFyJN88y0SGQhVmZnqFK/PeuMX9LzUyWsqqhNxIyg0jlzq946yA==
 
 qs@~6.5.2:
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
-  integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.3.tgz#3aeeffc91967ef6e35c0e488ef46fb296ab76aad"
+  integrity sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==
 
 query-string@^5.0.1:
   version "5.1.1"
@@ -4520,13 +4527,6 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
 
-appUser-home@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/appUser-home/-/appUser-home-2.0.0.tgz#9c70bfd8169bc1dcbf48604e0f04b8b49cde9e9f"
-  integrity sha1-nHC/2Babwdy/SGBODwS4tJzenp8=
-  dependencies:
-    os-homedir "^1.0.0"
-
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -4736,6 +4736,7 @@ yeoman-doctor@^4.0.0:
   integrity sha512-CP0fwGk5Y+jel+A0AQbyqnIFZRRpkKOeYUibiTSmlgV9PcgNFFVwn86VcUIpDLOqVjF+9v+O9FWQMo+IUcV2mA==
   dependencies:
     ansi-styles "^3.2.0"
+    appUser-home "^2.0.0"
     bin-version-check "^3.0.0"
     chalk "^2.3.0"
     global-agent "^2.0.0"
@@ -4744,7 +4745,6 @@ yeoman-doctor@^4.0.0:
     log-symbols "^2.1.0"
     semver "^5.0.3"
     twig "^1.10.5"
-    appUser-home "^2.0.0"
 
 yeoman-environment@2.3.4:
   version "2.3.4"
@@ -4824,6 +4824,7 @@ yo@3.1.0:
   resolved "https://registry.yarnpkg.com/yo/-/yo-3.1.0.tgz#b835da951657ed5105ac7a47ba385983dba6bb51"
   integrity sha512-boSESRRyvfyns3DfzxF2F0LVV97wSEFbKUi1oC7RwnZTA66KZ7Bo3JjOLe7mM6IjjeI0vEZcr4BbFjrSHh8d0Q==
   dependencies:
+    appUser-home "^2.0.0"
     async "^2.6.1"
     chalk "^2.4.1"
     cli-list "^0.2.0"
@@ -4850,7 +4851,6 @@ yo@3.1.0:
     tabtab "^1.3.2"
     titleize "^1.0.1"
     update-notifier "^2.5.0"
-    appUser-home "^2.0.0"
     yeoman-character "^1.0.0"
     yeoman-doctor "^4.0.0"
     yeoman-environment "^2.4.0"
